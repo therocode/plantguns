@@ -16,6 +16,9 @@ class Level
         void setTile(const glm::uvec2& tile, int32_t id);
         int32_t getTile(const glm::uvec2& tile) const;
         void createPlant(const glm::uvec2& tile, int32_t id);
+        bool hasPlant(const glm::uvec2& tile) const;
+        bool plantRipe(const glm::uvec2& tile) const;
+        void destroyPlant(const glm::uvec2& tile);
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
         std::unordered_map<glm::uvec2, Plant> mPlants;

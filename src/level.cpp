@@ -89,7 +89,17 @@ void Level::plant(Player& player)
 
     if(tileId == PLOT)
     {
-        createPlant(plantTile, player.plantId());
+        if(!hasPlant(plantTile))
+        {
+            createPlant(plantTile, player.plantId());
+        }
+        else
+        {
+            if(plantRipe(plantTile))
+            {
+                destroyPlant(plantTile);
+            }
+        }
     }
 }
 
@@ -112,13 +122,30 @@ int32_t Level::getTile(const glm::uvec2& tile) const
 
 void Level::createPlant(const glm::uvec2& tile, int32_t id)
 {
-    if(mPlants.count(tile) == 0)
-    {
-        Plant plant;
+    Plant plant;
 
-        plant.setTexture(mTextures->at("plant"));
-        plant.setDoneTexture(mTextures->at("appletree"));
-        plant.setPosition(((glm::vec2)tile) * 32.0f);
-        mPlants.emplace(tile, std::move(plant)); 
+    plant.setTexture(mTextures->at("plant"));
+    plant.setDoneTexture(mTextures->at("appletree"));
+    plant.setPosition(((glm::vec2)tile) * 32.0f);
+    mPlants.emplace(tile, std::move(plant)); 
+}
+
+bool Level::hasPlant(const glm::uvec2& tile) const
+{
+    return mPlants.count(tile) != 0;
+}
+
+bool Level::plantRipe(const glm::uvec2& tile) const
+{
+    if(hasPlant(tile))
+    {
+        return mPlants.at(tile).isRipe();
     }
+
+    return false;
+}
+
+void Level::destroyPlant(const glm::uvec2& tile)
+{
+    mPlants.erase(tile);
 }
