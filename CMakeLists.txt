@@ -20,6 +20,7 @@ set(source_files
     src/player.cpp
     src/lodepng.cpp
     src/level.cpp
+    src/directionresolver.cpp
 )
 
 set(header_files
@@ -29,6 +30,7 @@ set(header_files
     src/lodepng.hpp
     src/texturemaker.hpp
     src/level.hpp
+    src/directionresolver.hpp
 )
 
 #C++11 required

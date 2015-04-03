@@ -20,6 +20,7 @@ class PlantGuns : public fea::Application
         void setupGraphics();
         void setupPlayer();
         void setupLevel();
+        void update();
         fea::InputHandler mInputHandler;
         fea::Renderer2D mRenderer;
         //fea::AudioPlayer audioPlayer;

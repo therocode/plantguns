@@ -28,6 +28,9 @@ void PlantGuns::destroy()
 void PlantGuns::loop()
 {
     handleInput();
+
+    update();
+
     mRenderer.clear();
     render();
 
@@ -48,6 +51,25 @@ void PlantGuns::handleInput()
         {
             if(event.key.code == fea::Keyboard::ESCAPE)
                 quit();
+            else if(event.key.code == fea::Keyboard::A)
+                mPlayer.addMove(LEFT);
+            else if(event.key.code == fea::Keyboard::D)
+                mPlayer.addMove(RIGHT);
+            else if(event.key.code == fea::Keyboard::W)
+                mPlayer.addMove(UP);
+            else if(event.key.code == fea::Keyboard::S)
+                mPlayer.addMove(DOWN);
+        }
+        else if(event.type == fea::Event::KEYRELEASED)
+        {
+            if(event.key.code == fea::Keyboard::A)
+                mPlayer.delMove(LEFT);
+            else if(event.key.code == fea::Keyboard::D)
+                mPlayer.delMove(RIGHT);
+            else if(event.key.code == fea::Keyboard::W)
+                mPlayer.delMove(UP);
+            else if(event.key.code == fea::Keyboard::S)
+                mPlayer.delMove(DOWN);
         }
     }
 }
@@ -75,4 +97,9 @@ void PlantGuns::setupPlayer()
 void PlantGuns::setupLevel()
 {
     mLevel.setTexture(mTextures.at("tiles"));
+}
+
+void PlantGuns::update()
+{
+    mPlayer.update();
 }
