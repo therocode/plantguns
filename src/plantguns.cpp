@@ -110,5 +110,5 @@ void PlantGuns::setupLevel()
 void PlantGuns::update()
 {
     mPlayer.update();
-    mLevel.update();
+    mLevel.update(mPlayer);
 }

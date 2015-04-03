@@ -107,10 +107,36 @@ void Level::plant(Player& player)
     }
 }
 
-void Level::update()
+void Level::update(Player& player)
 {
     for(auto& plant : mPlants)
         plant.second.update();
+
+    glm::vec2 playerCollStart = player.position() + glm::vec2(12.0f, 12.0f);
+    glm::vec2 playerCollEnd = playerCollStart + glm::vec2(8.0f, 8.0f);
+
+    std::vector<glm::uvec2> toPickup;
+
+
+    for(auto& pickup : mPickups)
+    {
+        glm::vec2 pickupCollStart = (glm::vec2) pickup.first * 32.0f;
+        glm::vec2 pickupCollEnd = pickupCollStart + glm::vec2(32.0f, 32.0f);
+
+
+        if(playerCollStart.x < pickupCollEnd.x &&
+           playerCollStart.y < pickupCollEnd.y &&
+           playerCollEnd.x > pickupCollStart.x &&
+           playerCollEnd.y > pickupCollStart.y)
+        {
+            toPickup.push_back(pickup.first);
+        }
+    }
+
+    for(auto& pickedUp : toPickup)
+    {
+        mPickups.erase(pickedUp);
+    }
 }
 
 void Level::setTile(const glm::uvec2& tile, int32_t id)
@@ -178,5 +204,5 @@ void Level::createPickupFromPlant(const glm::uvec2& tile)
     Pickup pickup(id);
     pickup.setTexture(mTextures->at("goldplate"));
     pickup.setPosition((glm::vec2)(spawnTile) * 32.0f);
-    mPickups.emplace(tile, std::move(pickup));
+    mPickups.emplace(spawnTile, std::move(pickup));
 }

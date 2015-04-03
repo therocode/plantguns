@@ -12,7 +12,7 @@ class Level
         void renderMe(fea::Renderer2D& renderer);
         void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
         void plant(Player& player);
-        void update();
+        void update(Player& player);
     private:
         void setTile(const glm::uvec2& tile, int32_t id);
         int32_t getTile(const glm::uvec2& tile) const;
