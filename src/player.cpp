@@ -48,3 +48,8 @@ void Player::update()
 
     Entity::update();
 }
+
+int32_t Player::plantId() const
+{
+    return PISTOL;
+}

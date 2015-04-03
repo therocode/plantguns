@@ -7,6 +7,7 @@ class Entity
         Entity();
         void renderMe(fea::Renderer2D& renderer);
         void setPosition(const glm::vec2& position);
+        const glm::vec2& position() const;
         void translate(const glm::vec2& amount);
         void setSize(const glm::vec2& size);
         void setTexture(const fea::Texture& texture);

@@ -12,6 +12,7 @@ void PlantGuns::setup(const std::vector<std::string>& args)
 {
     mWindow.create(fea::VideoMode(1280, 768), "Plant guns");
     mWindow.setFramerateLimit(60);
+    mInputHandler.setKeyRepeatEnabled(false);
 
     mRenderer.setup();
 
@@ -59,6 +60,10 @@ void PlantGuns::handleInput()
                 mPlayer.addMove(UP);
             else if(event.key.code == fea::Keyboard::S)
                 mPlayer.addMove(DOWN);
+            else if(event.key.code == fea::Keyboard::F)
+            {
+                mLevel.plant(mPlayer);
+            }
         }
         else if(event.type == fea::Event::KEYRELEASED)
         {
@@ -86,6 +91,7 @@ void PlantGuns::setupGraphics()
 {
     mTextures.emplace("hat", makeTexture("data/textures/hat.png"));
     mTextures.emplace("tiles", makeTexture("data/textures/tiles.png"));
+    mTextures.emplace("plant", makeTexture("data/textures/plant.png"));
 }
 
 void PlantGuns::setupPlayer()
@@ -97,6 +103,7 @@ void PlantGuns::setupPlayer()
 void PlantGuns::setupLevel()
 {
     mLevel.setTexture(mTextures.at("tiles"));
+    mLevel.setPlantTexture(mTextures.at("plant"));
 }
 
 void PlantGuns::update()

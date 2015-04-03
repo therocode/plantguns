@@ -17,6 +17,11 @@ void Entity::setPosition(const glm::vec2& position)
     mPosition = position;
 }
 
+const glm::vec2& Entity::position() const
+{
+    return mPosition;
+}
+
 void Entity::translate(const glm::vec2& amount)
 {
     setPosition(mPosition + amount);

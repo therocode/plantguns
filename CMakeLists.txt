@@ -21,6 +21,7 @@ set(source_files
     src/lodepng.cpp
     src/level.cpp
     src/directionresolver.cpp
+    src/plant.cpp
 )
 
 set(header_files
@@ -31,6 +32,7 @@ set(header_files
     src/texturemaker.hpp
     src/level.hpp
     src/directionresolver.hpp
+    src/plant.hpp
 )
 
 #C++11 required
