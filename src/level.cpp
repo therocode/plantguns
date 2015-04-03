@@ -74,9 +74,11 @@ void Level::renderMe(fea::Renderer2D& renderer)
         plant.second.renderMe(renderer);
 }
 
-void Level::setTexture(fea::Texture& texture)
+void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
 {
-    mTiles.setTexture(texture);
+    mTextures = &textures;
+
+    mTiles.setTexture(mTextures->at("tiles"));
 }
 
 void Level::plant(Player& player)
@@ -91,9 +93,10 @@ void Level::plant(Player& player)
     }
 }
 
-void Level::setPlantTexture(fea::Texture& plantTexture)
+void Level::update()
 {
-    mPlantTexture = &plantTexture;
+    for(auto& plant : mPlants)
+        plant.second.update();
 }
 
 void Level::setTile(const glm::uvec2& tile, int32_t id)
@@ -113,7 +116,8 @@ void Level::createPlant(const glm::uvec2& tile, int32_t id)
     {
         Plant plant;
 
-        plant.setTexture(*mPlantTexture);
+        plant.setTexture(mTextures->at("plant"));
+        plant.setDoneTexture(mTextures->at("appletree"));
         plant.setPosition(((glm::vec2)tile) * 32.0f);
         mPlants.emplace(tile, std::move(plant)); 
     }

@@ -92,6 +92,7 @@ void PlantGuns::setupGraphics()
     mTextures.emplace("hat", makeTexture("data/textures/hat.png"));
     mTextures.emplace("tiles", makeTexture("data/textures/tiles.png"));
     mTextures.emplace("plant", makeTexture("data/textures/plant.png"));
+    mTextures.emplace("appletree", makeTexture("data/textures/appletree.png"));
 }
 
 void PlantGuns::setupPlayer()
@@ -102,11 +103,11 @@ void PlantGuns::setupPlayer()
 
 void PlantGuns::setupLevel()
 {
-    mLevel.setTexture(mTextures.at("tiles"));
-    mLevel.setPlantTexture(mTextures.at("plant"));
+    mLevel.setTextures(mTextures);
 }
 
 void PlantGuns::update()
 {
     mPlayer.update();
+    mLevel.update();
 }

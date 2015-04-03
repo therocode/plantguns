@@ -9,9 +9,9 @@ class Level
     public:
         Level();
         void renderMe(fea::Renderer2D& renderer);
-        void setTexture(fea::Texture& texture);
+        void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
         void plant(Player& player);
-        void setPlantTexture(fea::Texture& plantTexture);
+        void update();
     private:
         void setTile(const glm::uvec2& tile, int32_t id);
         int32_t getTile(const glm::uvec2& tile) const;
@@ -19,5 +19,5 @@ class Level
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
         std::unordered_map<glm::uvec2, Plant> mPlants;
-        fea::Texture* mPlantTexture;
+        const std::unordered_map<std::string, fea::Texture>* mTextures;
 };
