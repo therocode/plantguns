@@ -93,6 +93,7 @@ void PlantGuns::setupGraphics()
     mTextures.emplace("tiles", makeTexture("data/textures/tiles.png"));
     mTextures.emplace("plant", makeTexture("data/textures/plant.png"));
     mTextures.emplace("appletree", makeTexture("data/textures/appletree.png"));
+    mTextures.emplace("goldplate", makeTexture("data/textures/goldplate.png"));
 }
 
 void PlantGuns::setupPlayer()

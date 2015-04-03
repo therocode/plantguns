@@ -72,6 +72,9 @@ void Level::renderMe(fea::Renderer2D& renderer)
 
     for(auto& plant : mPlants)
         plant.second.renderMe(renderer);
+
+    for(auto& pickup : mPickups)
+        pickup.second.renderMe(renderer);
 }
 
 void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
@@ -97,6 +100,7 @@ void Level::plant(Player& player)
         {
             if(plantRipe(plantTile))
             {
+                createPickupFromPlant(plantTile);
                 destroyPlant(plantTile);
             }
         }
@@ -122,7 +126,7 @@ int32_t Level::getTile(const glm::uvec2& tile) const
 
 void Level::createPlant(const glm::uvec2& tile, int32_t id)
 {
-    Plant plant;
+    Plant plant(id);
 
     plant.setTexture(mTextures->at("plant"));
     plant.setDoneTexture(mTextures->at("appletree"));
@@ -145,7 +149,34 @@ bool Level::plantRipe(const glm::uvec2& tile) const
     return false;
 }
 
+int32_t Level::plantId(const glm::uvec2& tile) const
+{
+    return mPlants.at(tile).id();
+}
+
 void Level::destroyPlant(const glm::uvec2& tile)
 {
     mPlants.erase(tile);
+}
+
+void Level::createPickupFromPlant(const glm::uvec2& tile)
+{
+    int32_t id = plantId(tile);
+
+    glm::uvec2 spawnTile = tile;
+
+    int32_t random = rand() % 4;
+    if(random == 0)
+        spawnTile.x += 1;
+    else if(random == 1)
+        spawnTile.x -= 1;
+    else if(random == 2)
+        spawnTile.y += 1;
+    else if(random == 3)
+        spawnTile.y -= 1;
+
+    Pickup pickup(id);
+    pickup.setTexture(mTextures->at("goldplate"));
+    pickup.setPosition((glm::vec2)(spawnTile) * 32.0f);
+    mPickups.emplace(tile, std::move(pickup));
 }

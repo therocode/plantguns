@@ -22,6 +22,7 @@ set(source_files
     src/level.cpp
     src/directionresolver.cpp
     src/plant.cpp
+    src/pickup.cpp
 )
 
 set(header_files
@@ -33,6 +34,7 @@ set(header_files
     src/level.hpp
     src/directionresolver.hpp
     src/plant.hpp
+    src/pickup.hpp
 )
 
 #C++11 required

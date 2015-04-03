@@ -3,6 +3,7 @@
 #include <fea/render2d.hpp>
 #include "player.hpp"
 #include "plant.hpp"
+#include "pickup.hpp"
 
 class Level
 {
@@ -18,9 +19,12 @@ class Level
         void createPlant(const glm::uvec2& tile, int32_t id);
         bool hasPlant(const glm::uvec2& tile) const;
         bool plantRipe(const glm::uvec2& tile) const;
+        int32_t plantId(const glm::uvec2& tile) const;
         void destroyPlant(const glm::uvec2& tile);
+        void createPickupFromPlant(const glm::uvec2& tile);
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
-        std::unordered_map<glm::uvec2, Plant> mPlants;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
+        std::unordered_map<glm::uvec2, Plant> mPlants;
+        std::unordered_map<glm::uvec2, Pickup> mPickups;
 };

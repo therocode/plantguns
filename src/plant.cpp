@@ -1,7 +1,8 @@
 #include "plant.hpp"
 
-Plant::Plant():
-    mRipeTimer(1200)
+Plant::Plant(int32_t id):
+    mRipeTimer(120),
+    mId(id)
 {
 }
 
@@ -28,4 +29,9 @@ void Plant::update()
 bool Plant::isRipe() const
 {
     return !mRipeTimer;
+}
+
+int32_t Plant::id() const
+{
+    return mId;
 }
