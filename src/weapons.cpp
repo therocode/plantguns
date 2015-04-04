@@ -6,7 +6,8 @@ Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, ui
     mTextures(textures),
     mDirection(NONE),
     mIsFiring(false),
-    mFireRate(fireRate)
+    mFireRate(fireRate),
+    mSpeedMultiplier(1.0f)
 {
     resetTimer();
 }
@@ -54,6 +55,11 @@ bool Weapon::isOut() const
     return mAmmo == 0;
 }
 
+float Weapon::speedMultiplier() const
+{
+    return mSpeedMultiplier;
+}
+
 void Weapon::resetTimer(bool reduced)
 {
     mBulletTimer = (300 - mFireRate) / (reduced ? 5 : 1);
@@ -64,6 +70,7 @@ Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures):
 {
     mAmmo = 14;
     mName = "Pistol";
+    mSpeedMultiplier = 0.7f;
 }
 
 std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& position, Player& player)
@@ -94,6 +101,7 @@ Shotgun::Shotgun(const std::unordered_map<std::string, fea::Texture>& textures):
 {
     mAmmo = 8;
     mName = "Shotgun";
+    mSpeedMultiplier = 0.5f;
 }
 
 std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& position, Player& player)

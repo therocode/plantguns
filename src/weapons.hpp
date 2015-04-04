@@ -17,6 +17,7 @@ class Weapon
         const std::string name() const;
         uint32_t ammo() const;
         bool isOut() const;
+        float speedMultiplier() const;
     protected:
         void resetTimer(bool reduced = false);
         Direction mDirection;
@@ -27,6 +28,7 @@ class Weapon
         const std::unordered_map<std::string, fea::Texture>& mTextures;
         std::string mName;
         uint32_t mAmmo;
+        float mSpeedMultiplier;
 };
 
 class Pistol : public Weapon

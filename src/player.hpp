@@ -22,10 +22,13 @@ class Player : public Entity
         Weapon* weapon();
         void hit(Enemy& enemy);
     private:
+        Weapon* currentWeapon() const;
+        float mBaseRunSpeed;
         float mRunSpeed;
         DirectionResolver mDirectionResolver;
         Direction mFireDirection;
-        std::unique_ptr<Weapon> mWeapon;
+        std::vector<std::unique_ptr<Weapon>> mWeapons;
+        uint32_t mCurrentWeaponIndex;
 
         uint32_t mInvisibilityTimer;
 };

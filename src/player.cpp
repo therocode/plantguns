@@ -4,9 +4,11 @@
 #include <iostream>
        
 Player::Player():
+    mBaseRunSpeed(3.0f),
     mRunSpeed(3.0f),
     mFireDirection(NONE),
-    mInvisibilityTimer(0)
+    mInvisibilityTimer(0),
+    mCurrentWeaponIndex(0)
 {
     mHealth = 100;
     setSize({32.0f, 32.0f});
@@ -39,10 +41,10 @@ void Player::delMove(Direction d)
 void Player::addFire(Direction d)
 {
     mFireDirection = d;
-    if(mWeapon)
+    if(currentWeapon())
     {
-        mRunSpeed = 1.5f;
-        mWeapon->startFire(d);
+        mRunSpeed = mBaseRunSpeed * currentWeapon()->speedMultiplier();
+        currentWeapon()->startFire(d);
     }
 }
 
@@ -51,9 +53,9 @@ void Player::delFire(Direction d)
     if(d == mFireDirection)
     {
         mFireDirection = NONE;
-        if(mWeapon)
-            mWeapon->stopFire();
-        mRunSpeed = 3.0f;
+        if(currentWeapon())
+            currentWeapon()->stopFire();
+        mRunSpeed = mBaseRunSpeed;
     }
 }
 
@@ -65,13 +67,13 @@ void Player::update()
     mAcceleration = accelerator.get(playerDir, mRunSpeed, mVelocity, 0.5f);
 
 
-    if(mWeapon)
+    if(currentWeapon())
     {
-        if(mWeapon->isOut())
-            mWeapon = nullptr;
+        if(currentWeapon()->isOut())
+            mWeapons.erase(mWeapons.begin() + mCurrentWeaponIndex);
         
-        if(mWeapon)
-            mWeapon->update();
+        if(currentWeapon())
+            currentWeapon()->update();
     }
 
     if(mInvisibilityTimer > 0)
@@ -87,13 +89,13 @@ int32_t Player::plantId() const
         
 void Player::giveWeapon(std::unique_ptr<Weapon> weapon)
 {
-    mWeapon = std::move(weapon);
+    mWeapons.push_back(std::move(weapon));
 }
 
 Weapon* Player::weapon()
 {
-    if(mWeapon)
-        return &*mWeapon;
+    if(currentWeapon())
+        return currentWeapon();
     else
         return nullptr;
 }
@@ -109,4 +111,12 @@ void Player::hit(Enemy& enemy)
         mHealth -= enemy.damage();
         mInvisibilityTimer = 30;
     }
+}
+
+Weapon* Player::currentWeapon() const
+{
+    if(mCurrentWeaponIndex < mWeapons.size())
+        return &*mWeapons[mCurrentWeaponIndex];
+    else
+        return nullptr;
 }
