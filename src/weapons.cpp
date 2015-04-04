@@ -50,6 +50,11 @@ uint32_t Weapon::ammo() const
     return mAmmo;
 }
 
+void Weapon::addAmmo(uint32_t ammo)
+{
+    mAmmo += ammo;
+}
+
 bool Weapon::isOut() const
 {
     return mAmmo == 0;
@@ -96,6 +101,11 @@ std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& positio
     }
 }
 
+WeaponType Pistol::type()
+{
+    return PISTOL;
+}
+
 Shotgun::Shotgun(const std::unordered_map<std::string, fea::Texture>& textures):
     Weapon::Weapon(textures, 230)
 {
@@ -129,4 +139,9 @@ std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& positi
     {
         return result;
     }
+}
+
+WeaponType Shotgun::type()
+{
+    return SHOTGUN;
 }

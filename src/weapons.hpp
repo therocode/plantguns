@@ -4,6 +4,7 @@
 #include "bullets.hpp"
 #include "direction.hpp"
 
+enum WeaponType {PISTOL, SHOTGUN};
 class Player;
 
 class Weapon
@@ -18,6 +19,8 @@ class Weapon
         uint32_t ammo() const;
         bool isOut() const;
         float speedMultiplier() const;
+        virtual WeaponType type() = 0;
+        void addAmmo(uint32_t ammo);
     protected:
         void resetTimer(bool reduced = false);
         Direction mDirection;
@@ -36,6 +39,7 @@ class Pistol : public Weapon
     public:
         Pistol(const std::unordered_map<std::string, fea::Texture>& textures);
         virtual std::vector<std::unique_ptr<Bullet>> getBullets(const glm::vec2& position, Player& player);
+        virtual WeaponType type();
 };
 
 class Shotgun : public Weapon
@@ -43,4 +47,5 @@ class Shotgun : public Weapon
     public:
         Shotgun(const std::unordered_map<std::string, fea::Texture>& textures);
         virtual std::vector<std::unique_ptr<Bullet>> getBullets(const glm::vec2& position, Player& player);
+        virtual WeaponType type();
 };

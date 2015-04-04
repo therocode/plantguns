@@ -130,6 +130,10 @@ void PlantGuns::setupPlayer()
     mPlayer.setPosition({550.0f, 450.0f});
     mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
     mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
+    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
+    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
+    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
+    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
 }
 
 void PlantGuns::setupLevel()

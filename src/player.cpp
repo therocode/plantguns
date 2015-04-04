@@ -89,7 +89,19 @@ int32_t Player::plantId() const
         
 void Player::giveWeapon(std::unique_ptr<Weapon> weapon)
 {
-    mWeapons.push_back(std::move(weapon));
+    bool merged = false;
+    for(auto& currentWeapon : mWeapons)
+    {
+        if(currentWeapon->type() == weapon->type())
+        {
+            currentWeapon->addAmmo(weapon->ammo());
+            merged = true;
+            break;
+        }
+    }
+
+    if(!merged)
+        mWeapons.push_back(std::move(weapon));
 }
 
 Weapon* Player::weapon()

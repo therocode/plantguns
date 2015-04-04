@@ -4,8 +4,6 @@
 #include "directionresolver.hpp"
 #include "weapons.hpp"
 
-enum PlantId {PISTOL};
-
 class Enemy;
 
 class Player : public Entity
