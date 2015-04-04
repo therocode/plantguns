@@ -12,6 +12,10 @@ Level::Level():
     mStormTimer(stormLength),
     mStorms(false)
 {
+    mFont = std::unique_ptr<fea::Font>(new fea::Font("data/fonts/LiberationSans-Regular.ttf", 14));
+    mTimerText.setPenFont(*mFont);
+    mTimerText.setPenColor(fea::Color::White);
+    mTimerText.setColor(fea::Color::White);
     mTiles.addTileDefinition(GRASS, fea::TileDefinition(glm::uvec2(0, 0)));
     mTiles.addTileDefinition(PLOT, fea::TileDefinition(glm::uvec2(1, 0)));
     mTiles.addTileDefinition(FENCEH, fea::TileDefinition(glm::uvec2(0, 1)));
@@ -87,6 +91,8 @@ void Level::renderMe(fea::Renderer2D& renderer)
 
     for(auto& enemy : mEnemies)
         enemy->renderMe(renderer);
+
+    renderer.queue(mTimerText);
 }
 
 void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
@@ -262,6 +268,8 @@ void Level::update(Player* player)
 
         mStorms = !mStorms;
     }
+
+    updateTimer();
 }
 
 void Level::spawn(EnemyType type, const glm::vec2& position)
@@ -363,4 +371,11 @@ glm::vec2 Level::spawnLocation() const
         tile = glm::vec2(xTile(rd), 0);
 
     return (glm::vec2)tile * 32.0f;
+}
+
+void Level::updateTimer()
+{
+    mTimerText.setPenPosition({640.0f - mTimerText.getSize().x / 2.0f, 100.0f});
+    mTimerText.clear();
+    mTimerText.write("Storm " + (mStorms ? std::string("ends") : std::string("starts")) + " in: " + std::to_string(mStormTimer / 60));
 }

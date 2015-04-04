@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <fea/render2d.hpp>
+#include <fea/render2dtext.hpp>
 #include "player.hpp"
 #include "enemies.hpp"
 #include "plant.hpp"
@@ -25,6 +26,7 @@ class Level
         void destroyPlant(const glm::uvec2& tile);
         void createPickupFromPlant(const glm::uvec2& tile);
         glm::vec2 spawnLocation() const;
+        void updateTimer();
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
@@ -35,4 +37,7 @@ class Level
 
         uint32_t mStormTimer;
         bool mStorms;
+
+        std::unique_ptr<fea::Font> mFont;
+        fea::TextSurface mTimerText;
 };
