@@ -8,7 +8,8 @@ Player::Player():
     mRunSpeed(3.0f),
     mFireDirection(NONE),
     mInvisibilityTimer(0),
-    mCurrentWeaponIndex(0)
+    mCurrentWeaponIndex(0),
+    mCurrentSeedIndex(0)
 {
     mHealth = 100;
     setSize({32.0f, 32.0f});
@@ -82,11 +83,6 @@ void Player::update()
     Entity::update();
 }
 
-int32_t Player::plantId() const
-{
-    return PISTOL;
-}
-        
 void Player::giveWeapon(std::unique_ptr<Weapon> weapon)
 {
     bool merged = false;
@@ -104,12 +100,43 @@ void Player::giveWeapon(std::unique_ptr<Weapon> weapon)
         mWeapons.push_back(std::move(weapon));
 }
 
+void Player::giveSeeds(SeedBag bag)
+{
+    bool merged = false;
+    for(auto& currentSeed : mSeeds)
+    {
+        if(currentSeed.type == bag.type)
+            currentSeed.amount += bag.amount;
+    }
+
+    if(!merged)
+        mSeeds.push_back(bag);
+}
+
 Weapon* Player::weapon()
 {
     if(currentWeapon())
         return currentWeapon();
     else
         return nullptr;
+}
+
+SeedBag* Player::seedBag()
+{
+    if(currentSeedBag())
+        return currentSeedBag();
+    else
+        return nullptr;
+}
+
+void Player::usedSeed()
+{
+    SeedBag* bag = currentSeedBag();
+
+    bag->amount--;
+
+    if(bag->amount == 0)
+        mSeeds.erase(mSeeds.begin() + mCurrentSeedIndex);
 }
 
 void Player::hit(Enemy& enemy)
@@ -135,12 +162,24 @@ void Player::toggleWeapon()
 
 void Player::toggleSeed()
 {
+    mCurrentSeedIndex++;
+
+    if(mCurrentSeedIndex >= mSeeds.size())
+        mCurrentSeedIndex = 0;
 }
 
-Weapon* Player::currentWeapon() const
+Weapon* Player::currentWeapon()
 {
     if(mCurrentWeaponIndex < mWeapons.size())
         return &*mWeapons[mCurrentWeaponIndex];
+    else
+        return nullptr;
+}
+
+SeedBag* Player::currentSeedBag()
+{
+    if(mCurrentSeedIndex < mSeeds.size())
+        return &mSeeds[mCurrentSeedIndex];
     else
         return nullptr;
 }

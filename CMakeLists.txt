@@ -29,6 +29,7 @@ set(source_files
     src/enemies.cpp
     src/intersector.cpp
     src/accelerator.cpp
+    src/seedfactory.cpp
 )
 
 set(header_files
@@ -47,6 +48,8 @@ set(header_files
     src/enemies.hpp
     src/intersector.hpp
     src/accelerator.hpp
+    src/seedbag.hpp
+    src/seedfactory.hpp
 )
 
 #C++11 required

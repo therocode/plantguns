@@ -1,5 +1,6 @@
 #include "plantguns.hpp"
 #include "texturemaker.hpp"
+#include "seedfactory.hpp"
 
 PlantGuns::PlantGuns():
      mInputHandler(new fea::SDL2InputBackend()),
@@ -128,12 +129,10 @@ void PlantGuns::setupPlayer()
 {
     mPlayer.setTexture(mTextures.at("hat"));
     mPlayer.setPosition({550.0f, 450.0f});
-    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
     mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
     mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
-    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
-    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
-    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
+    mPlayer.giveSeeds(seedFactory(PISTOL));
+    mPlayer.giveSeeds(seedFactory(SHOTGUN));
 }
 
 void PlantGuns::setupLevel()

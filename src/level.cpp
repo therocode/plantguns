@@ -138,7 +138,13 @@ void Level::plant(Player& player)
     {
         if(!hasPlant(plantTile))
         {
-            createPlant(plantTile, player.plantId());
+            SeedBag* seedBag = player.seedBag();
+
+            if(seedBag)
+            {
+                createPlant(plantTile, seedBag->type);
+                player.usedSeed();
+            }
         }
         else
         {
@@ -446,7 +452,7 @@ void Level::updateTimer()
 void Level::updatePlayerInfo(Player& player)
 {
     auto* weapon = player.weapon();
-    std::string weaponName = "Nothing";
+    std::string weaponName = "No weapons";
     std::string weaponAmmo;
     if(weapon)
     {
@@ -454,9 +460,20 @@ void Level::updatePlayerInfo(Player& player)
         weaponAmmo = std::to_string(weapon->ammo());
     }
 
+    auto* seedBag = player.seedBag();
+    std::string seedName = "No seeds";
+    std::string seedAmount;
+    if(seedBag)
+    {
+        seedName = seedBag->name;
+        seedAmount = std::to_string(seedBag->amount);
+    }
+
     mInfoText.setPenPosition({100.0f, 484.0f});
     mInfoText.clear();
     mInfoText.write("Health: " + std::to_string(player.health()));
     mInfoText.setPenPosition({100.0f, 510.0f});
     mInfoText.write(weaponName + ": " + weaponAmmo);
+    mInfoText.setPenPosition({100.0f, 536.0f});
+    mInfoText.write(seedName + ": " + seedAmount);
 }
