@@ -66,9 +66,10 @@ void Entity::update()
     }
 }
 
-void Entity::knock(const glm::vec2& knockVector)
+void Entity::knock(const glm::vec2& knockVector, float power)
 {
-    mKnockVel = knockVector;
+    if(glm::length(knockVector))
+        mKnockVel = glm::normalize(knockVector) * power;
 }
 
 void Entity::knockFrom(const glm::vec2& knockPosition, float power)

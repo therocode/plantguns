@@ -17,7 +17,7 @@ class Entity
         glm::vec2 center() const;
         void setTexture(const fea::Texture& texture);
         virtual void update();
-        void knock(const glm::vec2& knockVector);
+        void knock(const glm::vec2& knockVector, float power);
         void knockFrom(const glm::vec2& knockPosition, float power);
         void colorize(const fea::Color& color);
         bool isDead() const;

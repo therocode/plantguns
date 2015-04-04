@@ -1,5 +1,6 @@
 #include "weapons.hpp"
 #include <iostream>
+#include "player.hpp"
 
 Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, uint32_t fireRate):
     mTextures(textures),
@@ -12,7 +13,7 @@ Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, ui
 
 void Weapon::startFire(Direction direction)
 {
-    resetTimer();
+    resetTimer(true);
     mDirection = direction;
     mIsFiring = true;
 }
@@ -53,9 +54,9 @@ bool Weapon::isOut() const
     return mAmmo == 0;
 }
 
-void Weapon::resetTimer()
+void Weapon::resetTimer(bool reduced)
 {
-    mBulletTimer = 300 - mFireRate;
+    mBulletTimer = (300 - mFireRate) / (reduced ? 5 : 1);
 }
 
 Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures):
@@ -65,7 +66,7 @@ Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures):
     mName = "Pistol";
 }
 
-std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& position)
+std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& position, Player& player)
 {
     std::vector<std::unique_ptr<Bullet>> result;
 
@@ -95,7 +96,7 @@ Shotgun::Shotgun(const std::unordered_map<std::string, fea::Texture>& textures):
     mName = "Shotgun";
 }
 
-std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& position)
+std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& position, Player& player)
 {
     std::vector<std::unique_ptr<Bullet>> result;
 
@@ -110,6 +111,7 @@ std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& positi
             result.push_back(std::move(bullet));
         }
 
+        player.knock(-toVector(mDirection), 5.0f);
         --mAmmo;
         
         mBulletReady = false;

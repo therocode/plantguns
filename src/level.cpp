@@ -260,7 +260,7 @@ void Level::update(Player* player)
     {
         if(player->weapon() != nullptr)
         {
-            for(auto& bullet : player->weapon()->getBullets(player->position() + glm::vec2(16.0f, 16.0f)))
+            for(auto& bullet : player->weapon()->getBullets(player->position() + glm::vec2(16.0f, 16.0f), *player))
             {
                 mBullets.push_back(std::move(bullet));
             }
