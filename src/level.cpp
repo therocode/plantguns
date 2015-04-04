@@ -1,5 +1,6 @@
 #include "level.hpp"
 #include "texturemaker.hpp"
+#include "intersector.hpp"
         
 enum TileType {GRASS, PLOT, FENCEH, FENCEV};
 
@@ -115,11 +116,13 @@ void Level::plant(Player& player)
 
 void Level::update(Player& player)
 {
+    Intersector intersector;
+
     for(auto& plant : mPlants)
         plant.second.update();
 
     glm::vec2 playerCollStart = player.position() + glm::vec2(12.0f, 12.0f);
-    glm::vec2 playerCollEnd = playerCollStart + glm::vec2(8.0f, 8.0f);
+    glm::vec2 playerCollSize = glm::vec2(8.0f, 8.0f);
 
     std::vector<glm::uvec2> toPickup;
 
@@ -127,13 +130,9 @@ void Level::update(Player& player)
     for(auto& pickup : mPickups)
     {
         glm::vec2 pickupCollStart = (glm::vec2) pickup.first * 32.0f;
-        glm::vec2 pickupCollEnd = pickupCollStart + glm::vec2(32.0f, 32.0f);
+        glm::vec2 pickupCollSize = glm::vec2(32.0f, 32.0f);
 
-
-        if(playerCollStart.x < pickupCollEnd.x &&
-           playerCollStart.y < pickupCollEnd.y &&
-           playerCollEnd.x > pickupCollStart.x &&
-           playerCollEnd.y > pickupCollStart.y)
+        if(intersector.intersects(playerCollStart, playerCollSize, pickupCollStart, pickupCollSize))
         {
             toPickup.push_back(pickup.first);
         }
@@ -144,7 +143,18 @@ void Level::update(Player& player)
         auto& bullet = mBullets[i];
         bullet->update();
 
-        if(bullet->isDead())
+        bool dead = false;
+
+        for(auto& enemy : mEnemies)
+        {
+            if(intersector.intersects(bullet->position(), bullet->size(), enemy->position(), enemy->size()))
+            {
+                enemy->hit(*bullet);
+                dead = true;
+            }
+        }
+
+        if(bullet->isDead() || dead)
             mBullets.erase(mBullets.begin() + i);
         else
             i++;

@@ -13,10 +13,6 @@ Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, ui
 void Weapon::startFire(Direction direction)
 {
     mDirection = direction;
-
-
-    resetTimer();
-    mBulletReady = true;
     mIsFiring = true;
 }
 

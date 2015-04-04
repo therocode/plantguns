@@ -10,6 +10,7 @@ class Entity
         const glm::vec2& position() const;
         void translate(const glm::vec2& amount);
         void setSize(const glm::vec2& size);
+        glm::vec2 size() const;
         void setTexture(const fea::Texture& texture);
         virtual void update();
     protected:

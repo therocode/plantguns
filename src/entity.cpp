@@ -31,6 +31,11 @@ void Entity::setSize(const glm::vec2& size)
 {
     mQuad.setSize(size);
 }
+        
+glm::vec2 Entity::size() const
+{
+    return mQuad.getSize();
+}
 
 void Entity::setTexture(const fea::Texture& texture)
 {
