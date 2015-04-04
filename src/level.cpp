@@ -75,6 +75,9 @@ void Level::renderMe(fea::Renderer2D& renderer)
 
     for(auto& pickup : mPickups)
         pickup.second.renderMe(renderer);
+
+    for(auto& bullet : mBullets)
+        bullet->renderMe(renderer);
 }
 
 void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
@@ -133,9 +136,28 @@ void Level::update(Player& player)
         }
     }
 
+    for(uint32_t i = 0; i < mBullets.size();)
+    {
+        auto& bullet = mBullets[i];
+        bullet->update();
+
+        if(bullet->isDead())
+            mBullets.erase(mBullets.begin() + i);
+        else
+            i++;
+    }
+
     for(auto& pickedUp : toPickup)
     {
         mPickups.erase(pickedUp);
+    }
+
+    if(player.weapon() != nullptr)
+    {
+        for(auto& bullet : player.weapon()->getBullets(player.position() + glm::vec2(16.0f, 16.0f)))
+        {
+            mBullets.push_back(std::move(bullet));
+        }
     }
 }
 

@@ -27,4 +27,5 @@ class Level
         const std::unordered_map<std::string, fea::Texture>* mTextures;
         std::unordered_map<glm::uvec2, Plant> mPlants;
         std::unordered_map<glm::uvec2, Pickup> mPickups;
+        std::vector<std::unique_ptr<Bullet>> mBullets;
 };

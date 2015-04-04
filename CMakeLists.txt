@@ -23,6 +23,9 @@ set(source_files
     src/directionresolver.cpp
     src/plant.cpp
     src/pickup.cpp
+    src/weapons.cpp
+    src/bullets.cpp
+    src/direction.cpp
 )
 
 set(header_files
@@ -35,6 +38,9 @@ set(header_files
     src/directionresolver.hpp
     src/plant.hpp
     src/pickup.hpp
+    src/weapons.hpp
+    src/bullets.hpp
+    src/direction.hpp
 )
 
 #C++11 required

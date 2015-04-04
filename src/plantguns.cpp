@@ -60,10 +60,16 @@ void PlantGuns::handleInput()
                 mPlayer.addMove(UP);
             else if(event.key.code == fea::Keyboard::S)
                 mPlayer.addMove(DOWN);
+            else if(event.key.code == fea::Keyboard::J)
+                mPlayer.addFire(LEFT);
+            else if(event.key.code == fea::Keyboard::L)
+                mPlayer.addFire(RIGHT);
+            else if(event.key.code == fea::Keyboard::I)
+                mPlayer.addFire(UP);
+            else if(event.key.code == fea::Keyboard::K)
+                mPlayer.addFire(DOWN);
             else if(event.key.code == fea::Keyboard::F)
-            {
                 mLevel.plant(mPlayer);
-            }
         }
         else if(event.type == fea::Event::KEYRELEASED)
         {
@@ -75,6 +81,14 @@ void PlantGuns::handleInput()
                 mPlayer.delMove(UP);
             else if(event.key.code == fea::Keyboard::S)
                 mPlayer.delMove(DOWN);
+            else if(event.key.code == fea::Keyboard::J)
+                mPlayer.delFire(LEFT);
+            else if(event.key.code == fea::Keyboard::L)
+                mPlayer.delFire(RIGHT);
+            else if(event.key.code == fea::Keyboard::I)
+                mPlayer.delFire(UP);
+            else if(event.key.code == fea::Keyboard::K)
+                mPlayer.delFire(DOWN);
         }
     }
 }
@@ -94,12 +108,14 @@ void PlantGuns::setupGraphics()
     mTextures.emplace("plant", makeTexture("data/textures/plant.png"));
     mTextures.emplace("appletree", makeTexture("data/textures/appletree.png"));
     mTextures.emplace("goldplate", makeTexture("data/textures/goldplate.png"));
+    mTextures.emplace("bullet", makeTexture("data/textures/bullet.png"));
 }
 
 void PlantGuns::setupPlayer()
 {
     mPlayer.setTexture(mTextures.at("hat"));
     mPlayer.setPosition({550.0f, 450.0f});
+    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
 }
 
 void PlantGuns::setupLevel()
