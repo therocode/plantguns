@@ -5,12 +5,12 @@
 #include "weaponfactory.hpp"
 #include <random>
         
-enum TileType {GRASS, PLOT, FENCEH, FENCEV};
+enum TileType {GRASS, PLOT, FENCEH, FENCEV, FENCETL, FENCETR, FENCEBR, FENCEBL};
 
 const uint32_t stormLength = 600;
 
 Level::Level():
-    mTiles(40, 24, 32, 32, 0.5f, 0.5f),
+    mTiles(40, 24, 32, 32, 0.33333333f, 0.33333333f),
     mStormTimer(stormLength),
     mStorms(false),
     mRainTargetOpacity(0.0f),
@@ -38,6 +38,10 @@ Level::Level():
     mTiles.addTileDefinition(PLOT, fea::TileDefinition(glm::uvec2(1, 0)));
     mTiles.addTileDefinition(FENCEH, fea::TileDefinition(glm::uvec2(0, 1)));
     mTiles.addTileDefinition(FENCEV, fea::TileDefinition(glm::uvec2(1, 1)));
+    mTiles.addTileDefinition(FENCETL, fea::TileDefinition(glm::uvec2(2, 2)));
+    mTiles.addTileDefinition(FENCETR, fea::TileDefinition(glm::uvec2(1, 2)));
+    mTiles.addTileDefinition(FENCEBL, fea::TileDefinition(glm::uvec2(2, 1)));
+    mTiles.addTileDefinition(FENCEBR, fea::TileDefinition(glm::uvec2(0, 2)));
 
     mTiles.fill(GRASS);
     mTileIds.fill(GRASS);
@@ -67,6 +71,12 @@ Level::Level():
     setTile({23, 11}, FENCEV);
     setTile({23, 14}, FENCEV);
     setTile({23, 15}, FENCEV);
+
+    //corner fences
+    setTile({16, 9}, FENCETL);
+    setTile({23, 9}, FENCETR);
+    setTile({16, 16}, FENCEBL);
+    setTile({23, 16}, FENCEBR);
 
     //tl plots
     setTile({17,10}, PLOT);
