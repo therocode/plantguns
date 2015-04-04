@@ -64,8 +64,15 @@ void Player::update()
     Accelerator accelerator;
     mAcceleration = accelerator.get(playerDir, mRunSpeed, mVelocity, 0.5f);
 
+
     if(mWeapon)
-        mWeapon->update();
+    {
+        if(mWeapon->isOut())
+            mWeapon = nullptr;
+        
+        if(mWeapon)
+            mWeapon->update();
+    }
 
     if(mInvisibilityTimer > 0)
         --mInvisibilityTimer;

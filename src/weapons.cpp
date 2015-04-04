@@ -38,14 +38,31 @@ void Weapon::update()
     }
 }
 
+const std::string Weapon::name() const
+{
+    return mName;
+}
+
+uint32_t Weapon::ammo() const
+{
+    return mAmmo;
+}
+
+bool Weapon::isOut() const
+{
+    return mAmmo == 0;
+}
+
 void Weapon::resetTimer()
 {
     mBulletTimer = 300 - mFireRate;
 }
 
 Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures):
-    Weapon::Weapon(textures, 295)
+    Weapon::Weapon(textures, 260)
 {
+    mAmmo = 14;
+    mName = "Pistol";
 }
 
 std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& position)
@@ -61,7 +78,41 @@ std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& positio
         result.push_back(std::move(bullet));
 
         mBulletReady = false;
+        --mAmmo;
         
+        return result;
+    }
+    else
+    {
+        return result;
+    }
+}
+
+Shotgun::Shotgun(const std::unordered_map<std::string, fea::Texture>& textures):
+    Weapon::Weapon(textures, 230)
+{
+    mAmmo = 8;
+    mName = "Shotgun";
+}
+
+std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& position)
+{
+    std::vector<std::unique_ptr<Bullet>> result;
+
+    if(mBulletReady)
+    {
+        for(int32_t i = 0; i < 20; i++)
+        {
+            auto bullet = std::unique_ptr<Bullet>(new MiniBullet(mDirection));
+            bullet->setPosition(position - glm::vec2(4.0f, 4.0f));
+            bullet->setTexture(mTextures.at("minibullet"));
+
+            result.push_back(std::move(bullet));
+        }
+
+        --mAmmo;
+        
+        mBulletReady = false;
         return result;
     }
     else

@@ -85,3 +85,8 @@ bool Entity::isDead() const
 {
     return mHealth <= 0;
 }
+
+int32_t Entity::health() const
+{
+    return mHealth;
+}

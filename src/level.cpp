@@ -10,12 +10,28 @@ const uint32_t stormLength = 600;
 Level::Level():
     mTiles(40, 24, 32, 32, 0.5f, 0.5f),
     mStormTimer(stormLength),
-    mStorms(false)
+    mStorms(false),
+    mRainTargetOpacity(0.0f),
+    mLightning({1280.0f, 768.0f}),
+    mLightningTargetOpacity(0.0f) 
 {
+    mRainAnimation = fea::Animation(glm::vec2(0.0f / 128.0f, 0.0f / 32.0f), glm::vec2(32.0f / 128.0f, 32.0f / 32.0f), 4, 7);
+
+    mRain = fea::RepeatedQuad({1280.0f, 768.0f});
+    mRain.setTileSize(glm::vec2({64.0f, 64.0f}));
+    mRain.setScrollSpeed(glm::vec2({-0.01f, 0.06f}));
+    mRain.setAnimation(mRainAnimation);
+    mRain.setOpacity(0.0f);
+    mLightning.setOpacity(0.0f);
+
     mFont = std::unique_ptr<fea::Font>(new fea::Font("data/fonts/LiberationSans-Regular.ttf", 14));
     mTimerText.setPenFont(*mFont);
     mTimerText.setPenColor(fea::Color::White);
     mTimerText.setColor(fea::Color::White);
+    mInfoText.setPenFont(*mFont);
+    mInfoText.setPenColor(fea::Color::White);
+    mInfoText.setColor(fea::Color::White);
+
     mTiles.addTileDefinition(GRASS, fea::TileDefinition(glm::uvec2(0, 0)));
     mTiles.addTileDefinition(PLOT, fea::TileDefinition(glm::uvec2(1, 0)));
     mTiles.addTileDefinition(FENCEH, fea::TileDefinition(glm::uvec2(0, 1)));
@@ -75,7 +91,7 @@ Level::Level():
     setTile({22,15}, PLOT);
 }
 
-void Level::renderMe(fea::Renderer2D& renderer)
+void Level::renderMe(fea::Renderer2D& renderer, Player& player)
 {
     for(const auto& chunk : mTiles.getTileChunks())
         renderer.queue(*chunk);
@@ -92,7 +108,16 @@ void Level::renderMe(fea::Renderer2D& renderer)
     for(auto& enemy : mEnemies)
         enemy->renderMe(renderer);
 
+    if(!player.isDead())
+        player.renderMe(renderer);
+
+    renderer.queue(mRain);
+    mRain.tick();
+
+    renderer.queue(mLightning);
+
     renderer.queue(mTimerText);
+    renderer.queue(mInfoText);
 }
 
 void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
@@ -100,6 +125,7 @@ void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& tex
     mTextures = &textures;
 
     mTiles.setTexture(mTextures->at("tiles"));
+    mRain.setTexture(textures.at("rain"));
 }
 
 void Level::plant(Player& player)
@@ -251,6 +277,25 @@ void Level::update(Player* player)
             glm::vec2 location = spawnLocation();
             spawn(SPIKEY, location);
         }
+
+        if(randomPercent(rd) < 1 && !mLightningOn)
+        {
+            if(randomPercent(rd) < 50)
+            {
+                mLightningOn = 5;
+                mLightningTargetOpacity = 0.5f;
+            }
+        }
+
+        if(mLightningOn > 0)
+        {
+            --mLightningOn;
+
+            if(mLightningOn == 0)
+            {
+                mLightningTargetOpacity = 0.0f;
+            }
+        }
     }
 
     if(mStormTimer > 0)
@@ -261,15 +306,33 @@ void Level::update(Player* player)
 
         if(mStorms)
         {//it is now sunny
+            mRainTargetOpacity = 0.0f;
+            mLightningOn = false;
         }
         else
         {//it is now a storm
+            mRainTargetOpacity = 1.0f;
         }
 
         mStorms = !mStorms;
     }
 
     updateTimer();
+
+    if(player)
+        updatePlayerInfo(*player);
+
+    float currentOpacity = mRain.getOpacity();
+    if(currentOpacity < mRainTargetOpacity - 0.02f)
+        mRain.setOpacity(currentOpacity + 0.01f);
+    else if(currentOpacity > mRainTargetOpacity + 0.02f)
+        mRain.setOpacity(currentOpacity - 0.01f);
+
+    currentOpacity = mLightning.getOpacity();
+    if(currentOpacity < mLightningTargetOpacity - 0.01f)
+        mLightning.setOpacity(currentOpacity + 0.15f);
+    else if(currentOpacity > mLightningTargetOpacity + 0.01f)
+        mLightning.setOpacity(currentOpacity - 0.15f);
 }
 
 void Level::spawn(EnemyType type, const glm::vec2& position)
@@ -378,4 +441,22 @@ void Level::updateTimer()
     mTimerText.setPenPosition({640.0f - mTimerText.getSize().x / 2.0f, 100.0f});
     mTimerText.clear();
     mTimerText.write("Storm " + (mStorms ? std::string("ends") : std::string("starts")) + " in: " + std::to_string(mStormTimer / 60));
+}
+
+void Level::updatePlayerInfo(Player& player)
+{
+    auto* weapon = player.weapon();
+    std::string weaponName = "Nothing";
+    std::string weaponAmmo;
+    if(weapon)
+    {
+        weaponName = weapon->name();
+        weaponAmmo = std::to_string(weapon->ammo());
+    }
+
+    mInfoText.setPenPosition({100.0f, 484.0f});
+    mInfoText.clear();
+    mInfoText.write("Health: " + std::to_string(player.health()));
+    mInfoText.setPenPosition({100.0f, 510.0f});
+    mInfoText.write(weaponName + ": " + weaponAmmo);
 }

@@ -98,10 +98,7 @@ void PlantGuns::handleInput()
         
 void PlantGuns::render()
 {
-    mLevel.renderMe(mRenderer);
-
-    if(!mPlayer.isDead())
-        mPlayer.renderMe(mRenderer);
+    mLevel.renderMe(mRenderer, mPlayer);
 
     mRenderer.render();
 }
@@ -115,13 +112,15 @@ void PlantGuns::setupGraphics()
     mTextures.emplace("goldplate", makeTexture("data/textures/goldplate.png"));
     mTextures.emplace("bullet", makeTexture("data/textures/bullet.png"));
     mTextures.emplace("spikey", makeTexture("data/textures/spikey.png"));
+    mTextures.emplace("rain", makeTexture("data/textures/rain.png"));
+    mTextures.emplace("minibullet", makeTexture("data/textures/minibullet.png"));
 }
 
 void PlantGuns::setupPlayer()
 {
     mPlayer.setTexture(mTextures.at("hat"));
     mPlayer.setPosition({550.0f, 450.0f});
-    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Pistol(mTextures)));
+    mPlayer.giveWeapon(std::unique_ptr<Weapon>(new Shotgun(mTextures)));
 }
 
 void PlantGuns::setupLevel()

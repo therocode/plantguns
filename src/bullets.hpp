@@ -20,3 +20,9 @@ class PistolBullet : public Bullet
     public:
         PistolBullet(Direction direction);
 };
+
+class MiniBullet : public Bullet
+{
+    public:
+        MiniBullet(Direction direction);
+};

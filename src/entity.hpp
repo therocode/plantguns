@@ -21,6 +21,7 @@ class Entity
         void knockFrom(const glm::vec2& knockPosition, float power);
         void colorize(const fea::Color& color);
         bool isDead() const;
+        int32_t health() const;
     protected:
         glm::vec2 mPosition;
         fea::Quad mQuad;

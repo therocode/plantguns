@@ -11,7 +11,7 @@ class Level
 {
     public:
         Level();
-        void renderMe(fea::Renderer2D& renderer);
+        void renderMe(fea::Renderer2D& renderer, Player& player);
         void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
         void plant(Player& player);
         void update(Player* player);
@@ -27,6 +27,7 @@ class Level
         void createPickupFromPlant(const glm::uvec2& tile);
         glm::vec2 spawnLocation() const;
         void updateTimer();
+        void updatePlayerInfo(Player& player);
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
@@ -40,4 +41,12 @@ class Level
 
         std::unique_ptr<fea::Font> mFont;
         fea::TextSurface mTimerText;
+        fea::TextSurface mInfoText;
+
+        fea::RepeatedQuad mRain;
+        fea::Animation mRainAnimation;
+        float mRainTargetOpacity;
+        fea::Quad mLightning;
+        float mLightningTargetOpacity;
+        int32_t mLightningOn;
 };
