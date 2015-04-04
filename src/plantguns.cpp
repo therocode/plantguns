@@ -109,6 +109,7 @@ void PlantGuns::setupGraphics()
     mTextures.emplace("appletree", makeTexture("data/textures/appletree.png"));
     mTextures.emplace("goldplate", makeTexture("data/textures/goldplate.png"));
     mTextures.emplace("bullet", makeTexture("data/textures/bullet.png"));
+    mTextures.emplace("spikey", makeTexture("data/textures/spikey.png"));
 }
 
 void PlantGuns::setupPlayer()
@@ -121,6 +122,11 @@ void PlantGuns::setupPlayer()
 void PlantGuns::setupLevel()
 {
     mLevel.setTextures(mTextures);
+
+    mLevel.spawn(SPIKEY, {450.0f, 120.0f});
+    mLevel.spawn(SPIKEY, {510.0f, 130.0f});
+    mLevel.spawn(SPIKEY, {490.0f, 170.0f});
+    mLevel.spawn(SPIKEY, {420.0f, 125.0f});
 }
 
 void PlantGuns::update()

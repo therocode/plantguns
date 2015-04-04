@@ -78,6 +78,9 @@ void Level::renderMe(fea::Renderer2D& renderer)
 
     for(auto& bullet : mBullets)
         bullet->renderMe(renderer);
+
+    for(auto& enemy : mEnemies)
+        enemy->renderMe(renderer);
 }
 
 void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
@@ -147,6 +150,17 @@ void Level::update(Player& player)
             i++;
     }
 
+    for(uint32_t i = 0; i < mEnemies.size();)
+    {
+        auto& enemy = mEnemies[i];
+        enemy->update();
+
+        if(enemy->isDead())
+            mEnemies.erase(mEnemies.begin() + i);
+        else
+            i++;
+    }
+
     for(auto& pickedUp : toPickup)
     {
         mPickups.erase(pickedUp);
@@ -158,6 +172,17 @@ void Level::update(Player& player)
         {
             mBullets.push_back(std::move(bullet));
         }
+    }
+}
+
+void Level::spawn(EnemyType type, const glm::vec2& position)
+{
+    if(type == SPIKEY)
+    {
+        std::unique_ptr<Spikey> spikey = std::unique_ptr<Spikey>(new Spikey());
+        spikey->setPosition(position);
+        spikey->setTexture(mTextures->at("spikey"));
+        mEnemies.push_back(std::move(spikey));
     }
 }
 

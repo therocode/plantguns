@@ -26,6 +26,7 @@ set(source_files
     src/weapons.cpp
     src/bullets.cpp
     src/direction.cpp
+    src/enemies.cpp
 )
 
 set(header_files
@@ -41,6 +42,7 @@ set(header_files
     src/weapons.hpp
     src/bullets.hpp
     src/direction.hpp
+    src/enemies.hpp
 )
 
 #C++11 required
