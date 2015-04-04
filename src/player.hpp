@@ -21,6 +21,8 @@ class Player : public Entity
         void giveWeapon(std::unique_ptr<Weapon> weapon);
         Weapon* weapon();
         void hit(Enemy& enemy);
+        void toggleWeapon();
+        void toggleSeed();
     private:
         Weapon* currentWeapon() const;
         float mBaseRunSpeed;

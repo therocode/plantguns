@@ -113,6 +113,18 @@ void Player::hit(Enemy& enemy)
     }
 }
 
+void Player::toggleWeapon()
+{
+    mCurrentWeaponIndex++;
+
+    if(mCurrentWeaponIndex >= mWeapons.size())
+        mCurrentWeaponIndex = 0;
+}
+
+void Player::toggleSeed()
+{
+}
+
 Weapon* Player::currentWeapon() const
 {
     if(mCurrentWeaponIndex < mWeapons.size())

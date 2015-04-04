@@ -73,6 +73,14 @@ void PlantGuns::handleInput()
                 if(!mPlayer.isDead())
                     mLevel.plant(mPlayer);
             }
+            else if(event.key.code == fea::Keyboard::O)
+            {
+                mPlayer.toggleWeapon();
+            }
+            else if(event.key.code == fea::Keyboard::U)
+            {
+                mPlayer.toggleSeed();
+            }
         }
         else if(event.type == fea::Event::KEYRELEASED)
         {
