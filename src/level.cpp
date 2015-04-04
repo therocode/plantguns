@@ -1,6 +1,8 @@
 #include "level.hpp"
 #include "texturemaker.hpp"
 #include "intersector.hpp"
+#include "seedfactory.hpp"
+#include "weaponfactory.hpp"
 #include <random>
         
 enum TileType {GRASS, PLOT, FENCEH, FENCEV};
@@ -197,6 +199,7 @@ void Level::update(Player* player)
 
         for(auto& pickedUp : toPickup)
         {
+            player->giveWeapon(weaponFactory(mPickups.at(pickedUp).id(), *mTextures));
             mPickups.erase(pickedUp);
         }
     }
@@ -363,7 +366,7 @@ int32_t Level::getTile(const glm::uvec2& tile) const
     return mTileIds[tile.x + tile.y * 40];
 }
 
-void Level::createPlant(const glm::uvec2& tile, int32_t id)
+void Level::createPlant(const glm::uvec2& tile, WeaponType id)
 {
     Plant plant(id);
 
@@ -388,7 +391,7 @@ bool Level::plantRipe(const glm::uvec2& tile) const
     return false;
 }
 
-int32_t Level::plantId(const glm::uvec2& tile) const
+WeaponType Level::plantId(const glm::uvec2& tile) const
 {
     return mPlants.at(tile).id();
 }
@@ -400,7 +403,7 @@ void Level::destroyPlant(const glm::uvec2& tile)
 
 void Level::createPickupFromPlant(const glm::uvec2& tile)
 {
-    int32_t id = plantId(tile);
+    WeaponType id = plantId(tile);
 
     glm::uvec2 spawnTile = tile;
 

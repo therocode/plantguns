@@ -19,10 +19,10 @@ class Level
     private:
         void setTile(const glm::uvec2& tile, int32_t id);
         int32_t getTile(const glm::uvec2& tile) const;
-        void createPlant(const glm::uvec2& tile, int32_t id);
+        void createPlant(const glm::uvec2& tile, WeaponType id);
         bool hasPlant(const glm::uvec2& tile) const;
         bool plantRipe(const glm::uvec2& tile) const;
-        int32_t plantId(const glm::uvec2& tile) const;
+        WeaponType plantId(const glm::uvec2& tile) const;
         void destroyPlant(const glm::uvec2& tile);
         void createPickupFromPlant(const glm::uvec2& tile);
         glm::vec2 spawnLocation() const;

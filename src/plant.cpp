@@ -1,7 +1,7 @@
 #include "plant.hpp"
 #include "enemies.hpp"
 
-Plant::Plant(int32_t id):
+Plant::Plant(WeaponType id):
     mRipeTimer(2400),
     mId(id)
 {
@@ -33,7 +33,7 @@ bool Plant::isRipe() const
     return mRipeTimer <= 0;
 }
 
-int32_t Plant::id() const
+WeaponType Plant::id() const
 {
     return mId;
 }

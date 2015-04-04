@@ -1,10 +1,12 @@
 #pragma once
 #include "entity.hpp"
+#include "weapons.hpp"
 
 class Pickup : public Entity
 {
     public:
-        Pickup(int32_t id);
+        Pickup(WeaponType id);
+        WeaponType id() const;
     private:
-        int32_t mId;
+        WeaponType mId;
 };

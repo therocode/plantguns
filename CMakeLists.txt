@@ -30,6 +30,7 @@ set(source_files
     src/intersector.cpp
     src/accelerator.cpp
     src/seedfactory.cpp
+    src/weaponfactory.cpp
 )
 
 set(header_files
@@ -50,6 +51,7 @@ set(header_files
     src/accelerator.hpp
     src/seedbag.hpp
     src/seedfactory.hpp
+    src/weaponfactory.hpp
 )
 
 #C++11 required
