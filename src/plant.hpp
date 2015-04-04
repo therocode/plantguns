@@ -8,13 +8,13 @@ class Plant : public Entity
     public:
         Plant(int32_t id);
         void setDoneTexture(const fea::Texture& doneTexture);
-        void update();
+        void update(bool storm);
         bool isRipe() const;
         int32_t id() const;
         void trampled(Enemy& enemy);
     private:
         const fea::Texture* mDoneTexture;
-        uint32_t mRipeTimer;
+        int32_t mRipeTimer;
         int32_t mId;
 };
 

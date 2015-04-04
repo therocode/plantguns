@@ -24,6 +24,7 @@ class Level
         int32_t plantId(const glm::uvec2& tile) const;
         void destroyPlant(const glm::uvec2& tile);
         void createPickupFromPlant(const glm::uvec2& tile);
+        glm::vec2 spawnLocation() const;
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
@@ -31,4 +32,7 @@ class Level
         std::unordered_map<glm::uvec2, Pickup> mPickups;
         std::vector<std::unique_ptr<Bullet>> mBullets;
         std::vector<std::unique_ptr<Enemy>> mEnemies;
+
+        uint32_t mStormTimer;
+        bool mStorms;
 };

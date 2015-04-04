@@ -2,7 +2,7 @@
 #include "enemies.hpp"
 
 Plant::Plant(int32_t id):
-    mRipeTimer(120),
+    mRipeTimer(2400),
     mId(id)
 {
     mHealth = 240;
@@ -13,15 +13,15 @@ void Plant::setDoneTexture(const fea::Texture& doneTexture)
     mDoneTexture = &doneTexture;
 }
 
-void Plant::update()
+void Plant::update(bool storm)
 {
     Entity::update();
 
     if(mRipeTimer > 0)
     {
-        mRipeTimer--;
+        mRipeTimer -= storm ? 2 : 5;
 
-        if(mRipeTimer == 0)
+        if(mRipeTimer <= 0)
         {
             setTexture(*mDoneTexture);
         }
@@ -30,7 +30,7 @@ void Plant::update()
 
 bool Plant::isRipe() const
 {
-    return !mRipeTimer;
+    return mRipeTimer <= 0;
 }
 
 int32_t Plant::id() const

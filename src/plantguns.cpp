@@ -127,23 +127,6 @@ void PlantGuns::setupPlayer()
 void PlantGuns::setupLevel()
 {
     mLevel.setTextures(mTextures);
-
-    mLevel.spawn(SPIKEY, {450.0f, 120.0f});
-    mLevel.spawn(SPIKEY, {510.0f, 130.0f});
-    mLevel.spawn(SPIKEY, {490.0f, 170.0f});
-    mLevel.spawn(SPIKEY, {420.0f, 125.0f});
-    mLevel.spawn(SPIKEY, {451.0f, 120.0f});
-    mLevel.spawn(SPIKEY, {511.0f, 130.0f});
-    mLevel.spawn(SPIKEY, {491.0f, 170.0f});
-    mLevel.spawn(SPIKEY, {421.0f, 125.0f});
-    mLevel.spawn(SPIKEY, {450.0f, 121.0f});
-    mLevel.spawn(SPIKEY, {510.0f, 131.0f});
-    mLevel.spawn(SPIKEY, {490.0f, 171.0f});
-    mLevel.spawn(SPIKEY, {420.0f, 126.0f});
-    mLevel.spawn(SPIKEY, {451.0f, 121.0f});
-    mLevel.spawn(SPIKEY, {511.0f, 131.0f});
-    mLevel.spawn(SPIKEY, {491.0f, 171.0f});
-    mLevel.spawn(SPIKEY, {421.0f, 126.0f});
 }
 
 void PlantGuns::update()

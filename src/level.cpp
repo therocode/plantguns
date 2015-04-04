@@ -1,11 +1,16 @@
 #include "level.hpp"
 #include "texturemaker.hpp"
 #include "intersector.hpp"
+#include <random>
         
 enum TileType {GRASS, PLOT, FENCEH, FENCEV};
 
+const uint32_t stormLength = 600;
+
 Level::Level():
-    mTiles(40, 24, 32, 32, 0.5f, 0.5f)
+    mTiles(40, 24, 32, 32, 0.5f, 0.5f),
+    mStormTimer(stormLength),
+    mStorms(false)
 {
     mTiles.addTileDefinition(GRASS, fea::TileDefinition(glm::uvec2(0, 0)));
     mTiles.addTileDefinition(PLOT, fea::TileDefinition(glm::uvec2(1, 0)));
@@ -122,7 +127,7 @@ void Level::update(Player* player)
 
     for(auto& plant : mPlants)
     {
-        plant.second.update();
+        plant.second.update(mStorms);
 
         if(plant.second.isDead())
         {
@@ -229,6 +234,34 @@ void Level::update(Player* player)
             }
         }
     }
+
+    if(mStorms)
+    {
+        std::random_device rd;
+        std::uniform_int_distribution<> randomPercent(0, 99);
+
+        if(randomPercent(rd) < 2)
+        {
+            glm::vec2 location = spawnLocation();
+            spawn(SPIKEY, location);
+        }
+    }
+
+    if(mStormTimer > 0)
+        --mStormTimer;
+    else
+    {
+        mStormTimer = stormLength;
+
+        if(mStorms)
+        {//it is now sunny
+        }
+        else
+        {//it is now a storm
+        }
+
+        mStorms = !mStorms;
+    }
 }
 
 void Level::spawn(EnemyType type, const glm::vec2& position)
@@ -308,4 +341,26 @@ void Level::createPickupFromPlant(const glm::uvec2& tile)
     pickup.setTexture(mTextures->at("goldplate"));
     pickup.setPosition((glm::vec2)(spawnTile) * 32.0f);
     mPickups.emplace(spawnTile, std::move(pickup));
+}
+
+glm::vec2 Level::spawnLocation() const
+{
+    glm::uvec2 tile;
+    std::random_device rd;
+    std::uniform_int_distribution<> directionRand(0, 3);
+    std::uniform_int_distribution<> xTile(0, 39);
+    std::uniform_int_distribution<> yTile(0, 23);
+
+    int32_t direction = directionRand(rd);
+
+    if(direction == 0)
+        tile = glm::vec2(0, yTile(rd));
+    else if(direction == 1)
+        tile = glm::vec2(39, yTile(rd));
+    else if(direction == 2)
+        tile = glm::vec2(xTile(rd), 23);
+    else if(direction == 3)
+        tile = glm::vec2(xTile(rd), 0);
+
+    return (glm::vec2)tile * 32.0f;
 }
