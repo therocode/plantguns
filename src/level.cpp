@@ -114,27 +114,35 @@ void Level::plant(Player& player)
     }
 }
 
-void Level::update(Player& player)
+void Level::update(Player* player)
 {
     Intersector intersector;
 
     for(auto& plant : mPlants)
         plant.second.update();
 
-    glm::vec2 playerCollStart = player.position() + glm::vec2(12.0f, 12.0f);
-    glm::vec2 playerCollSize = glm::vec2(8.0f, 8.0f);
-
-    std::vector<glm::uvec2> toPickup;
-
-
-    for(auto& pickup : mPickups)
+    if(player)
     {
-        glm::vec2 pickupCollStart = (glm::vec2) pickup.first * 32.0f;
-        glm::vec2 pickupCollSize = glm::vec2(32.0f, 32.0f);
+        glm::vec2 playerCollStart = player->position() + glm::vec2(12.0f, 12.0f);
+        glm::vec2 playerCollSize = glm::vec2(8.0f, 8.0f);
 
-        if(intersector.intersects(playerCollStart, playerCollSize, pickupCollStart, pickupCollSize))
+        std::vector<glm::uvec2> toPickup;
+
+
+        for(auto& pickup : mPickups)
         {
-            toPickup.push_back(pickup.first);
+            glm::vec2 pickupCollStart = (glm::vec2) pickup.first * 32.0f;
+            glm::vec2 pickupCollSize = glm::vec2(32.0f, 32.0f);
+
+            if(intersector.intersects(playerCollStart, playerCollSize, pickupCollStart, pickupCollSize))
+            {
+                toPickup.push_back(pickup.first);
+            }
+        }
+
+        for(auto& pickedUp : toPickup)
+        {
+            mPickups.erase(pickedUp);
         }
     }
 
@@ -150,6 +158,8 @@ void Level::update(Player& player)
             if(intersector.intersects(bullet->position(), bullet->size(), enemy->position(), enemy->size()))
             {
                 enemy->hit(*bullet);
+                enemy->knockFrom(bullet->center(), 6.5f);
+                enemy->colorize(orangeHurtColor);
                 dead = true;
             }
         }
@@ -165,22 +175,28 @@ void Level::update(Player& player)
         auto& enemy = mEnemies[i];
         enemy->update();
 
+        if(player)
+        {
+            if(intersector.intersects(player->position(), player->size(), enemy->position(), enemy->size()))
+            {
+                player->hit(*enemy);
+            }
+        }
+
         if(enemy->isDead())
             mEnemies.erase(mEnemies.begin() + i);
         else
             i++;
     }
 
-    for(auto& pickedUp : toPickup)
+    if(player)
     {
-        mPickups.erase(pickedUp);
-    }
-
-    if(player.weapon() != nullptr)
-    {
-        for(auto& bullet : player.weapon()->getBullets(player.position() + glm::vec2(16.0f, 16.0f)))
+        if(player->weapon() != nullptr)
         {
-            mBullets.push_back(std::move(bullet));
+            for(auto& bullet : player->weapon()->getBullets(player->position() + glm::vec2(16.0f, 16.0f)))
+            {
+                mBullets.push_back(std::move(bullet));
+            }
         }
     }
 }

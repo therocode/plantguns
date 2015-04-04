@@ -1,9 +1,12 @@
 #include "player.hpp"
+#include "enemies.hpp"
 #include <iostream>
        
 Player::Player():
     mRunSpeed(3.0f),
-    mFireDirection(NONE)
+    mFireDirection(NONE),
+    mInvisibilityTimer(0),
+    mHealth(100)
 {
     setSize({32.0f, 32.0f});
 }
@@ -73,6 +76,9 @@ void Player::update()
     if(mWeapon)
         mWeapon->update();
 
+    if(mInvisibilityTimer > 0)
+        --mInvisibilityTimer;
+
     Entity::update();
 }
 
@@ -92,4 +98,20 @@ Weapon* Player::weapon()
         return &*mWeapon;
     else
         return nullptr;
+}
+
+void Player::hit(Enemy& enemy)
+{
+    if(mInvisibilityTimer == 0)
+    {
+        knockFrom(enemy.center(), 8.0f);
+        colorize(redHurtColor);
+        mHealth -= enemy.damage();
+        mInvisibilityTimer = 30;
+    }
+}
+
+bool Player::isDead() const
+{
+    return mHealth <= 0;
 }

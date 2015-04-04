@@ -13,7 +13,7 @@ class Level
         void renderMe(fea::Renderer2D& renderer);
         void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
         void plant(Player& player);
-        void update(Player& player);
+        void update(Player* player);
         void spawn(EnemyType type, const glm::vec2& position);
     private:
         void setTile(const glm::uvec2& tile, int32_t id);

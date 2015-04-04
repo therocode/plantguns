@@ -69,7 +69,10 @@ void PlantGuns::handleInput()
             else if(event.key.code == fea::Keyboard::K)
                 mPlayer.addFire(DOWN);
             else if(event.key.code == fea::Keyboard::F)
-                mLevel.plant(mPlayer);
+            {
+                if(!mPlayer.isDead())
+                    mLevel.plant(mPlayer);
+            }
         }
         else if(event.type == fea::Event::KEYRELEASED)
         {
@@ -96,7 +99,9 @@ void PlantGuns::handleInput()
 void PlantGuns::render()
 {
     mLevel.renderMe(mRenderer);
-    mPlayer.renderMe(mRenderer);
+
+    if(!mPlayer.isDead())
+        mPlayer.renderMe(mRenderer);
 
     mRenderer.render();
 }
@@ -131,6 +136,12 @@ void PlantGuns::setupLevel()
 
 void PlantGuns::update()
 {
-    mPlayer.update();
-    mLevel.update(mPlayer);
+    if(!mPlayer.isDead())
+    {
+        mLevel.update(&mPlayer);
+        mPlayer.update();
+    }
+    else
+        mLevel.update(nullptr);
+
 }
