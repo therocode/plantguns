@@ -80,3 +80,8 @@ void Entity::colorize(const fea::Color& color)
 {
     mColoriser = color;
 }
+
+bool Entity::isDead() const
+{
+    return mHealth <= 0;
+}

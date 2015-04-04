@@ -27,7 +27,7 @@ class Level
         fea::TileMap mTiles;
         std::array<int32_t, 40 * 24> mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
-        std::unordered_map<glm::uvec2, Plant> mPlants;
+        PlantMap mPlants;
         std::unordered_map<glm::uvec2, Pickup> mPickups;
         std::vector<std::unique_ptr<Bullet>> mBullets;
         std::vector<std::unique_ptr<Enemy>> mEnemies;

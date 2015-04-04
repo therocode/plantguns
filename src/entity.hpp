@@ -20,6 +20,7 @@ class Entity
         void knock(const glm::vec2& knockVector);
         void knockFrom(const glm::vec2& knockPosition, float power);
         void colorize(const fea::Color& color);
+        bool isDead() const;
     protected:
         glm::vec2 mPosition;
         fea::Quad mQuad;
@@ -27,4 +28,5 @@ class Entity
         glm::vec2 mAcceleration;
         glm::vec2 mKnockVel;
         fea::Color mColoriser;
+        int32_t mHealth;
 };

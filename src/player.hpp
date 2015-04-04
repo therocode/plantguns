@@ -21,7 +21,6 @@ class Player : public Entity
         void giveWeapon(std::unique_ptr<Weapon> weapon);
         Weapon* weapon();
         void hit(Enemy& enemy);
-        bool isDead() const;
     private:
         float mRunSpeed;
         DirectionResolver mDirectionResolver;
@@ -29,5 +28,4 @@ class Player : public Entity
         std::unique_ptr<Weapon> mWeapon;
 
         uint32_t mInvisibilityTimer;
-        int32_t mHealth;
 };

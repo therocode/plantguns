@@ -1,9 +1,11 @@
 #include "plant.hpp"
+#include "enemies.hpp"
 
 Plant::Plant(int32_t id):
     mRipeTimer(120),
     mId(id)
 {
+    mHealth = 240;
 }
 
 void Plant::setDoneTexture(const fea::Texture& doneTexture)
@@ -34,4 +36,9 @@ bool Plant::isRipe() const
 int32_t Plant::id() const
 {
     return mId;
+}
+
+void Plant::trampled(Enemy& enemy)
+{
+    --mHealth;
 }

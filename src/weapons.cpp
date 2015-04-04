@@ -12,6 +12,7 @@ Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, ui
 
 void Weapon::startFire(Direction direction)
 {
+    resetTimer();
     mDirection = direction;
     mIsFiring = true;
 }
@@ -43,7 +44,7 @@ void Weapon::resetTimer()
 }
 
 Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures):
-    Weapon::Weapon(textures, 270)
+    Weapon::Weapon(textures, 295)
 {
 }
 

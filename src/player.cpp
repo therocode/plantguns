@@ -1,13 +1,14 @@
 #include "player.hpp"
 #include "enemies.hpp"
+#include "accelerator.hpp"
 #include <iostream>
        
 Player::Player():
     mRunSpeed(3.0f),
     mFireDirection(NONE),
-    mInvisibilityTimer(0),
-    mHealth(100)
+    mInvisibilityTimer(0)
 {
+    mHealth = 100;
     setSize({32.0f, 32.0f});
 }
 
@@ -60,18 +61,8 @@ void Player::update()
 {
     glm::vec2 playerDir = mDirectionResolver.getDirection();
 
-    glm::vec2 targetVel = playerDir * mRunSpeed;
-    glm::vec2 currentVel = mVelocity;
-
-    glm::vec2 acc = (targetVel - currentVel) / 1.0f;  //  / timestep
-    float maxAcc = 0.5f;
-
-    if(acc.x > maxAcc)
-        acc.x = maxAcc;
-    if(acc.y > maxAcc)
-        acc.y = maxAcc;
-
-    mAcceleration = acc;
+    Accelerator accelerator;
+    mAcceleration = accelerator.get(playerDir, mRunSpeed, mVelocity, 0.5f);
 
     if(mWeapon)
         mWeapon->update();
@@ -102,16 +93,13 @@ Weapon* Player::weapon()
 
 void Player::hit(Enemy& enemy)
 {
+    knockFrom(enemy.center(), 6.0f);
+    enemy.knockFrom(center(), 4.0f);
+
     if(mInvisibilityTimer == 0)
     {
-        knockFrom(enemy.center(), 8.0f);
         colorize(redHurtColor);
         mHealth -= enemy.damage();
         mInvisibilityTimer = 30;
     }
-}
-
-bool Player::isDead() const
-{
-    return mHealth <= 0;
 }

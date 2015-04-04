@@ -118,8 +118,20 @@ void Level::update(Player* player)
 {
     Intersector intersector;
 
+    std::vector<glm::uvec2> plantsToRemove;
+
     for(auto& plant : mPlants)
+    {
         plant.second.update();
+
+        if(plant.second.isDead())
+        {
+            plantsToRemove.push_back(plant.first);
+        }
+    }
+
+    for(auto& plantTile : plantsToRemove)
+        destroyPlant(plantTile);
 
     if(player)
     {
@@ -173,13 +185,31 @@ void Level::update(Player* player)
     for(uint32_t i = 0; i < mEnemies.size();)
     {
         auto& enemy = mEnemies[i];
-        enemy->update();
+        enemy->update(player, mPlants);
 
         if(player)
         {
             if(intersector.intersects(player->position(), player->size(), enemy->position(), enemy->size()))
             {
                 player->hit(*enemy);
+            }
+        }
+
+        for(uint32_t j = i+1; j < mEnemies.size(); j++)
+        {
+            auto& other = mEnemies[j];
+            if(intersector.intersects(enemy->position(), enemy->size(), other->position(), other->size()))
+            {
+                enemy->knockFrom(other->center(), 1.5f);
+                other->knockFrom(enemy->center(), 1.5f);
+            }
+        }
+
+        for(auto& plant : mPlants)
+        {
+            if(intersector.intersects(enemy->position(), enemy->size(), plant.second.position(), plant.second.size()))
+            {
+                plant.second.trampled(*enemy);
             }
         }
 

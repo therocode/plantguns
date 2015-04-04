@@ -28,6 +28,7 @@ set(source_files
     src/direction.cpp
     src/enemies.cpp
     src/intersector.cpp
+    src/accelerator.cpp
 )
 
 set(header_files
@@ -45,6 +46,7 @@ set(header_files
     src/direction.hpp
     src/enemies.hpp
     src/intersector.hpp
+    src/accelerator.hpp
 )
 
 #C++11 required
