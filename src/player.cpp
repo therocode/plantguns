@@ -112,6 +112,8 @@ void Player::giveSeeds(SeedBag bag)
     {
         if(currentSeed.type == bag.type)
             currentSeed.amount += bag.amount;
+        merged = true;
+        break;
     }
 
     if(!merged)
