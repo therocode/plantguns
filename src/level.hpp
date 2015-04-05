@@ -25,7 +25,7 @@ class Level
         bool plantRipe(const glm::uvec2& tile) const;
         WeaponType plantId(const glm::uvec2& tile) const;
         void destroyPlant(const glm::uvec2& tile);
-        void createPickupFromPlant(const glm::uvec2& tile);
+        void createPickupFromEnemy(const Enemy& enemy, WeaponType type);
         glm::vec2 spawnLocation() const;
         void updateTimer();
         void updatePlayerInfo(Player& player);
@@ -33,7 +33,7 @@ class Level
         TileMap mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
         PlantMap mPlants;
-        std::unordered_map<glm::uvec2, Pickup> mPickups;
+        std::vector<Pickup> mPickups;
         std::vector<std::unique_ptr<Bullet>> mBullets;
         std::vector<std::unique_ptr<Enemy>> mEnemies;
 

@@ -176,6 +176,11 @@ void Player::toggleSeed()
         mCurrentSeedIndex = 0;
 }
 
+void Player::heal(int32_t amount)
+{
+    mHealth = std::min(100, mHealth + amount);
+}
+
 Weapon* Player::currentWeapon()
 {
     if(mCurrentWeaponIndex < mWeapons.size())

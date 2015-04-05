@@ -6,6 +6,7 @@
 #include <random>
 
 const uint32_t stormLength = 600;
+const uint32_t healAmount = 20;
 
 Level::Level(Player& player):
     mTiles(40, 24, 32, 32, 0.33333333f, 0.33333333f),
@@ -112,7 +113,7 @@ void Level::renderMe(fea::Renderer2D& renderer, Player& player)
         plant.second.renderMe(renderer);
 
     for(auto& pickup : mPickups)
-        pickup.second.renderMe(renderer);
+        pickup.renderMe(renderer);
 
     for(auto& bullet : mBullets)
         bullet->renderMe(renderer);
@@ -192,18 +193,22 @@ void Level::update(Player* player)
     {
         std::vector<glm::uvec2> toPickup;
 
-        for(auto& pickup : mPickups)
+        for(uint32_t i = 0; i < mPickups.size();)
         {
-            if(intersector.intersects(*player, pickup.second))
+            auto& pickup = mPickups[i];
+            if(intersector.intersects(*player, pickup))
             {
-                toPickup.push_back(pickup.first);
-            }
-        }
+                if(pickup.id() == HEALTH)
+                    player->heal(healAmount);
+                else
+                    player->giveSeeds(seedFactory(pickup.id()));
 
-        for(auto& pickedUp : toPickup)
-        {
-            player->giveWeapon(weaponFactory(mPickups.at(pickedUp).id(), *mTextures));
-            mPickups.erase(pickedUp);
+                mPickups.erase(mPickups.begin() + i);
+            }
+            else
+            {
+                ++i;
+            }
         }
     }
 
@@ -263,7 +268,12 @@ void Level::update(Player* player)
         }
 
         if(enemy->isDead())
+        {
+            auto drop = enemy->drop();
+            if(drop)
+                createPickupFromEnemy(*enemy, *drop);
             mEnemies.erase(mEnemies.begin() + i);
+        }
         else
             i++;
     }
@@ -406,26 +416,18 @@ void Level::destroyPlant(const glm::uvec2& tile)
     mPlants.erase(tile);
 }
 
-void Level::createPickupFromPlant(const glm::uvec2& tile)
+void Level::createPickupFromEnemy(const Enemy& enemy, WeaponType type)
 {
-    WeaponType id = plantId(tile);
+    Pickup pickup(type);
+    if(type == HEALTH)
+        pickup.setTexture(mTextures->at("health"));
+    else if(type == PISTOL)
+        pickup.setTexture(mTextures->at("gun"));
+    else if(type == SHOTGUN)
+        pickup.setTexture(mTextures->at("shotgun"));
 
-    glm::uvec2 spawnTile = tile;
-
-    int32_t random = rand() % 4;
-    if(random == 0)
-        spawnTile.x += 1;
-    else if(random == 1)
-        spawnTile.x -= 1;
-    else if(random == 2)
-        spawnTile.y += 1;
-    else if(random == 3)
-        spawnTile.y -= 1;
-
-    Pickup pickup(id);
-    pickup.setTexture(mTextures->at("goldplate"));
-    pickup.setPosition((glm::vec2)(spawnTile) * 32.0f);
-    mPickups.emplace(spawnTile, std::move(pickup));
+    pickup.setPosition(enemy.center() - pickup.size() / 2.0f);
+    mPickups.push_back(std::move(pickup));
 }
 
 glm::vec2 Level::spawnLocation() const

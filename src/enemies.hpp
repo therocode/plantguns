@@ -17,6 +17,7 @@ class Enemy : public Entity
         int32_t damage() const;
         virtual void update(Player* player, PlantMap& plants);
         virtual glm::vec2 getTarget(Player* player, PlantMap& plants);
+        virtual std::unique_ptr<WeaponType> drop() const;
     protected:
         std::vector<glm::vec2> targetList(Player* player, PlantMap& plants) const;
         glm::vec2 closest(const std::vector<glm::vec2>& targets) const;
@@ -31,6 +32,7 @@ class Spikey : public Enemy
         virtual void update(Player* player, PlantMap& plants) override;
         virtual bool handleCollision() override;
         virtual glm::vec2 getTarget(Player* player, PlantMap& plants) override;
+        virtual std::unique_ptr<WeaponType> drop() const override;
     private:
         bool mUsePathFinding;
         fea::Pathfinder<TilePathAdaptor> mPathfinder;

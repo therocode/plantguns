@@ -4,7 +4,7 @@
 #include "bullets.hpp"
 #include "direction.hpp"
 
-enum WeaponType {PISTOL, SHOTGUN};
+enum WeaponType {HEALTH, PISTOL, SHOTGUN};
 class Player;
 
 class Weapon

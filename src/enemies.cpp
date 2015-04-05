@@ -33,6 +33,11 @@ glm::vec2 Enemy::getTarget(Player* player, PlantMap& plants)
         return center();
 }
 
+std::unique_ptr<WeaponType> Enemy::drop() const
+{
+    return std::unique_ptr<WeaponType>(new WeaponType(HEALTH));
+}
+
 std::vector<glm::vec2> Enemy::targetList(Player* player, PlantMap& plants) const
 {
     std::vector<glm::vec2> targets;
@@ -82,7 +87,7 @@ void Spikey::update(Player* player, PlantMap& plants)
 
     Accelerator accelerator;
 
-    mAcceleration = accelerator.get(mTarget - center(), 2.0f, mVelocity, 0.1f);
+    mAcceleration = accelerator.get(mTarget - center(), 1.4f, mVelocity, 0.1f);
 }
 
 bool Spikey::handleCollision()
@@ -111,4 +116,29 @@ glm::vec2 Spikey::getTarget(Player* player, PlantMap& plants)
         else 
             return (glm::vec2)(closestTile) * 32.0f + glm::vec2(16.0f, 16.0f);
     }
+}
+
+std::unique_ptr<WeaponType> Spikey::drop() const
+{
+    std::random_device rd;
+    std::uniform_int_distribution<> randomPercent(0, 99);
+
+    if(randomPercent(rd) < 15) // 1/20
+    {
+        int32_t percent = randomPercent(rd);
+        if(percent < 20)
+        {
+            return std::unique_ptr<WeaponType>(new WeaponType(SHOTGUN));
+        }
+        else if(percent < 50)
+        {
+            return std::unique_ptr<WeaponType>(new WeaponType(PISTOL));
+        }
+        else
+        {
+            return std::unique_ptr<WeaponType>(new WeaponType(HEALTH));
+        }
+    }
+
+    return nullptr;
 }

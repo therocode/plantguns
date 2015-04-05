@@ -119,11 +119,13 @@ void PlantGuns::setupGraphics()
     mTextures.emplace("tiles", makeTexture("data/textures/tiles.png"));
     mTextures.emplace("plant", makeTexture("data/textures/plant.png"));
     mTextures.emplace("appletree", makeTexture("data/textures/appletree.png"));
-    mTextures.emplace("goldplate", makeTexture("data/textures/goldplate.png"));
     mTextures.emplace("bullet", makeTexture("data/textures/bullet.png"));
     mTextures.emplace("spikey", makeTexture("data/textures/spikey.png"));
     mTextures.emplace("rain", makeTexture("data/textures/rain.png"));
     mTextures.emplace("minibullet", makeTexture("data/textures/minibullet.png"));
+    mTextures.emplace("health", makeTexture("data/textures/health.png"));
+    mTextures.emplace("gun", makeTexture("data/textures/gun.png"));
+    mTextures.emplace("shotgun", makeTexture("data/textures/shotgun.png"));
 }
 
 void PlantGuns::setupPlayer()
