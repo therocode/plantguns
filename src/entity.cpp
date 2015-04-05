@@ -3,7 +3,8 @@
 
 Entity::Entity():
     mQuad({32.0f, 32.0f}),
-    mColoriser(fea::Color::White)
+    mColoriser(fea::Color::White),
+    mCollisionTiles(nullptr)
 {
 }
         
@@ -51,7 +52,17 @@ void Entity::setTexture(const fea::Texture& texture)
 void Entity::update()
 {
     mVelocity += mAcceleration;
-    translate(mVelocity + mKnockVel);
+    glm::vec2 totalVel = mVelocity + mKnockVel;
+
+    glm::vec2 oldPos = mPosition;
+
+    translate({totalVel.x, 0.0f});
+    if(collides())
+        setPosition(oldPos);
+
+    translate({0.0f, totalVel.y});
+    if(collides())
+        setPosition(oldPos);
 
     mKnockVel /= 1.5f;
 
@@ -90,4 +101,24 @@ bool Entity::isDead() const
 int32_t Entity::health() const
 {
     return mHealth;
+}
+
+void Entity::setCollisionMap(const TileMap& tiles)
+{
+    mCollisionTiles = &tiles;
+}
+
+const glm::vec2& Entity::collisionStart() const
+{
+    return mCollisionStart;
+}
+
+const glm::vec2& Entity::collisionSize() const
+{
+    return mCollisionSize;
+}
+
+bool Entity::collides() const
+{
+    return false;
 }

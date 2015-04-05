@@ -65,6 +65,7 @@ Spikey::Spikey()
     mQuad.setSize({16.0f, 16.0f});
     mHealth = 15;
     mDamage = 9;
+    mCollisionSize = glm::vec2(16.0f, 16.0f);
 }
 
 void Spikey::update(Player* player, PlantMap& plants)

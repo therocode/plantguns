@@ -6,11 +6,12 @@
 #include "enemies.hpp"
 #include "plant.hpp"
 #include "pickup.hpp"
+#include "tilemap.hpp"
 
 class Level
 {
     public:
-        Level();
+        Level(Player& player);
         void renderMe(fea::Renderer2D& renderer, Player& player);
         void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
         void plant(Player& player);
@@ -29,7 +30,7 @@ class Level
         void updateTimer();
         void updatePlayerInfo(Player& player);
         fea::TileMap mTiles;
-        std::array<int32_t, 40 * 24> mTileIds;
+        TileMap mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
         PlantMap mPlants;
         std::unordered_map<glm::uvec2, Pickup> mPickups;

@@ -5,7 +5,8 @@
 PlantGuns::PlantGuns():
      mInputHandler(new fea::SDL2InputBackend()),
      mRenderer(fea::Viewport({1280, 768}, {0, 0}, fea::Camera({1280.0f / 2.0f, 768.0f / 2.0f}))),
-     mWindow(new fea::SDL2WindowBackend())
+     mWindow(new fea::SDL2WindowBackend()),
+     mLevel(mPlayer)
 {
 }
 

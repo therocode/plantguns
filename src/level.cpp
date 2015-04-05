@@ -9,7 +9,7 @@ enum TileType {GRASS, PLOT, FENCEH, FENCEV, FENCETL, FENCETR, FENCEBR, FENCEBL};
 
 const uint32_t stormLength = 600;
 
-Level::Level():
+Level::Level(Player& player):
     mTiles(40, 24, 32, 32, 0.33333333f, 0.33333333f),
     mStormTimer(stormLength),
     mStorms(false),
@@ -17,6 +17,8 @@ Level::Level():
     mLightning({1280.0f, 768.0f}),
     mLightningTargetOpacity(0.0f) 
 {
+    player.setCollisionMap(mTileIds);
+
     mRainAnimation = fea::Animation(glm::vec2(0.0f / 128.0f, 0.0f / 32.0f), glm::vec2(32.0f / 128.0f, 32.0f / 32.0f), 4, 7);
 
     mRain = fea::RepeatedQuad({1280.0f, 768.0f});
@@ -190,18 +192,11 @@ void Level::update(Player* player)
 
     if(player)
     {
-        glm::vec2 playerCollStart = player->position() + glm::vec2(12.0f, 12.0f);
-        glm::vec2 playerCollSize = glm::vec2(8.0f, 8.0f);
-
         std::vector<glm::uvec2> toPickup;
-
 
         for(auto& pickup : mPickups)
         {
-            glm::vec2 pickupCollStart = (glm::vec2) pickup.first * 32.0f;
-            glm::vec2 pickupCollSize = glm::vec2(32.0f, 32.0f);
-
-            if(intersector.intersects(playerCollStart, playerCollSize, pickupCollStart, pickupCollSize))
+            if(intersector.intersects(*player, pickup.second))
             {
                 toPickup.push_back(pickup.first);
             }
@@ -223,7 +218,7 @@ void Level::update(Player* player)
 
         for(auto& enemy : mEnemies)
         {
-            if(intersector.intersects(bullet->position(), bullet->size(), enemy->position(), enemy->size()))
+            if(intersector.intersects(*bullet, *enemy))
             {
                 enemy->hit(*bullet);
                 enemy->knockFrom(bullet->center(), 6.5f);
@@ -245,7 +240,7 @@ void Level::update(Player* player)
 
         if(player)
         {
-            if(intersector.intersects(player->position(), player->size(), enemy->position(), enemy->size()))
+            if(intersector.intersects(*player, *enemy))
             {
                 player->hit(*enemy);
             }
@@ -254,7 +249,7 @@ void Level::update(Player* player)
         for(uint32_t j = i+1; j < mEnemies.size(); j++)
         {
             auto& other = mEnemies[j];
-            if(intersector.intersects(enemy->position(), enemy->size(), other->position(), other->size()))
+            if(intersector.intersects(*enemy, *other))
             {
                 enemy->knockFrom(other->center(), 1.5f);
                 other->knockFrom(enemy->center(), 1.5f);
@@ -263,7 +258,7 @@ void Level::update(Player* player)
 
         for(auto& plant : mPlants)
         {
-            if(intersector.intersects(enemy->position(), enemy->size(), plant.second.position(), plant.second.size()))
+            if(intersector.intersects(*enemy, plant.second))
             {
                 plant.second.trampled(*enemy);
             }

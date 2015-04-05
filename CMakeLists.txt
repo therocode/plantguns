@@ -31,6 +31,7 @@ set(source_files
     src/accelerator.cpp
     src/seedfactory.cpp
     src/weaponfactory.cpp
+    src/tilemap.cpp
 )
 
 set(header_files
@@ -52,6 +53,7 @@ set(header_files
     src/seedbag.hpp
     src/seedfactory.hpp
     src/weaponfactory.hpp
+    src/tilemap.hpp
 )
 
 #C++11 required
