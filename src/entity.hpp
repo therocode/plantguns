@@ -28,6 +28,7 @@ class Entity
         const glm::vec2& collisionSize() const;
     protected:
         bool collides() const;
+        bool pointCollides(const glm::vec2& point) const;
         glm::vec2 mCollisionStart;
         glm::vec2 mCollisionSize;
         glm::vec2 mPosition;

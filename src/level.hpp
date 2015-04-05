@@ -18,8 +18,8 @@ class Level
         void update(Player* player);
         void spawn(EnemyType type, const glm::vec2& position);
     private:
-        void setTile(const glm::uvec2& tile, int32_t id);
-        int32_t getTile(const glm::uvec2& tile) const;
+        void setTile(const glm::uvec2& tile, TileType id);
+        TileType getTile(const glm::uvec2& tile) const;
         void createPlant(const glm::uvec2& tile, WeaponType id);
         bool hasPlant(const glm::uvec2& tile) const;
         bool plantRipe(const glm::uvec2& tile) const;

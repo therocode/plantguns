@@ -58,11 +58,11 @@ void Entity::update()
 
     translate({totalVel.x, 0.0f});
     if(collides())
-        setPosition(oldPos);
+        setPosition({oldPos.x, mPosition.y});
 
     translate({0.0f, totalVel.y});
     if(collides())
-        setPosition(oldPos);
+        setPosition({mPosition.x, oldPos.y});
 
     mKnockVel /= 1.5f;
 
@@ -120,5 +120,31 @@ const glm::vec2& Entity::collisionSize() const
 
 bool Entity::collides() const
 {
+    if(mCollisionTiles)
+    {
+        glm::vec2 collStart = position() + mCollisionStart;
+        glm::vec2 collEnd = collStart + mCollisionSize;
+
+
+        return pointCollides(collStart) ||
+               pointCollides({collStart.x, collEnd.y}) ||
+               pointCollides({collEnd.x, collStart.y}) ||
+               pointCollides(collEnd);
+    }
+
+    else return false;
+}
+
+bool Entity::pointCollides(const glm::vec2& point) const
+{
+    glm::uvec2 tile = (glm::uvec2) (glm::floor(point / 32.0f));
+
+    if(tile.x > 39 || tile.y > 23)
+        return true;
+
+    TileType type = getTile(*mCollisionTiles, tile);
+    if(type != GRASS && type != PLOT)
+        return true;
+
     return false;
 }

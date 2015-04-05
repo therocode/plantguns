@@ -4,8 +4,6 @@
 #include "seedfactory.hpp"
 #include "weaponfactory.hpp"
 #include <random>
-        
-enum TileType {GRASS, PLOT, FENCEH, FENCEV, FENCETL, FENCETR, FENCEBR, FENCEBL};
 
 const uint32_t stormLength = 600;
 
@@ -164,7 +162,7 @@ void Level::plant(Player& player)
         {
             if(plantRipe(plantTile))
             {
-                createPickupFromPlant(plantTile);
+                player.giveWeapon(weaponFactory(plantId(plantTile), *mTextures));
                 destroyPlant(plantTile);
             }
         }
@@ -300,15 +298,15 @@ void Level::update(Player* player)
                 mLightningTargetOpacity = 0.5f;
             }
         }
+    }
 
-        if(mLightningOn > 0)
+    if(mLightningOn > 0)
+    {
+        --mLightningOn;
+
+        if(mLightningOn == 0)
         {
-            --mLightningOn;
-
-            if(mLightningOn == 0)
-            {
-                mLightningTargetOpacity = 0.0f;
-            }
+            mLightningTargetOpacity = 0.0f;
         }
     }
 
@@ -356,17 +354,18 @@ void Level::spawn(EnemyType type, const glm::vec2& position)
         std::unique_ptr<Spikey> spikey = std::unique_ptr<Spikey>(new Spikey());
         spikey->setPosition(position);
         spikey->setTexture(mTextures->at("spikey"));
+        spikey->setCollisionMap(mTileIds);
         mEnemies.push_back(std::move(spikey));
     }
 }
 
-void Level::setTile(const glm::uvec2& tile, int32_t id)
+void Level::setTile(const glm::uvec2& tile, TileType id)
 {
     mTileIds[tile.x + tile.y * 40] = id;
     mTiles.setTile(tile, id);
 }
 
-int32_t Level::getTile(const glm::uvec2& tile) const
+TileType Level::getTile(const glm::uvec2& tile) const
 {
     return mTileIds[tile.x + tile.y * 40];
 }

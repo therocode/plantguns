@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 
-using TileMap = std::array<int32_t, 40 * 24>;
+enum TileType {GRASS, PLOT, FENCEH, FENCEV, FENCETL, FENCETR, FENCEBR, FENCEBL};
 
-int32_t getTile(const TileMap& tilemap, const glm::uvec2& tile);
+using TileMap = std::array<TileType, 40 * 24>;
+
+TileType getTile(const TileMap& tilemap, const glm::uvec2& tile);
