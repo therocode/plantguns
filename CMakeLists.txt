@@ -32,6 +32,7 @@ set(source_files
     src/seedfactory.cpp
     src/weaponfactory.cpp
     src/tilemap.cpp
+    src/tilepathadaptor.cpp
 )
 
 set(header_files
@@ -54,6 +55,7 @@ set(header_files
     src/seedfactory.hpp
     src/weaponfactory.hpp
     src/tilemap.hpp
+    src/tilepathadaptor.hpp
 )
 
 #C++11 required
