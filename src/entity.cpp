@@ -58,11 +58,18 @@ void Entity::update()
 
     translate({totalVel.x, 0.0f});
     if(collides())
-        setPosition({oldPos.x, mPosition.y});
+    {
+        if(handleCollision())
+            setPosition({oldPos.x, mPosition.y});
+    }
 
     translate({0.0f, totalVel.y});
     if(collides())
-        setPosition({mPosition.x, oldPos.y});
+    {
+        if(handleCollision())
+            setPosition({mPosition.x, oldPos.y});
+    }
+
 
     mKnockVel /= 1.5f;
 
@@ -116,6 +123,11 @@ const glm::vec2& Entity::collisionStart() const
 const glm::vec2& Entity::collisionSize() const
 {
     return mCollisionSize;
+}
+
+bool Entity::handleCollision()
+{
+    return true;
 }
 
 bool Entity::collides() const

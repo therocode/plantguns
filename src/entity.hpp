@@ -26,6 +26,7 @@ class Entity
         void setCollisionMap(const TileMap& tiles);
         const glm::vec2& collisionStart() const;
         const glm::vec2& collisionSize() const;
+        virtual bool handleCollision();
     protected:
         bool collides() const;
         bool pointCollides(const glm::vec2& point) const;

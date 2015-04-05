@@ -274,6 +274,7 @@ void Level::update(Player* player)
         {
             for(auto& bullet : player->weapon()->getBullets(player->position() + glm::vec2(16.0f, 16.0f), *player))
             {
+                bullet->setCollisionMap(mTileIds);
                 mBullets.push_back(std::move(bullet));
             }
         }

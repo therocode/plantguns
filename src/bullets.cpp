@@ -1,6 +1,11 @@
 #include "bullets.hpp"
 #include <glm/gtx/rotate_vector.hpp>
 
+Bullet::Bullet():
+    mDead(false)
+{
+}
+
 void Bullet::setDirection(Direction direction)
 {
     mDirection = direction;
@@ -11,16 +16,24 @@ void Bullet::update()
     Entity::update();
     if(mTtl > 0)
         mTtl--;
+    else
+        mDead = true;
 }
 
 bool Bullet::isDead() const
 {
-    return mTtl == 0;
+    return mDead;
 }
 
 int32_t Bullet::damage() const
 {
     return mDamage;
+}
+
+bool Bullet::handleCollision()
+{
+    mDead = true;
+    return false;
 }
 
 PistolBullet::PistolBullet(Direction direction)
