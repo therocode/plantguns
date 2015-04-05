@@ -8,7 +8,8 @@ Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, st
     mIsFiring(false),
     mFireRate(fireRate),
     mSpeedMultiplier(1.0f),
-    mSoundPlayer(soundPlayer)
+    mSoundPlayer(soundPlayer),
+    mBulletReady(false)
 {
     resetTimer();
 }

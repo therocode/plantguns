@@ -130,7 +130,7 @@ std::unique_ptr<WeaponType> Spikey::drop() const
         {
             return std::unique_ptr<WeaponType>(new WeaponType(SHOTGUN));
         }
-        else if(percent < 50)
+        else if(percent < 80)
         {
             return std::unique_ptr<WeaponType>(new WeaponType(PISTOL));
         }

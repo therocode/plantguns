@@ -5,7 +5,7 @@
 #include "weaponfactory.hpp"
 #include <random>
 
-const uint32_t stormLength = 600;
+const uint32_t stormLength = 1500;
 const uint32_t healAmount = 20;
 
 Level::Level(Player& player):
@@ -301,17 +301,17 @@ void Level::update(Player* player, std::function<void(const std::string&)> sound
     if(mStorms)
     {
         std::random_device rd;
-        std::uniform_int_distribution<> randomPercent(0, 99);
+        std::uniform_int_distribution<> randomPercent(0, 999);
 
-        if(randomPercent(rd) < 2)
+        if(randomPercent(rd) < 10)
         {
             glm::vec2 location = spawnLocation();
             spawn(SPIKEY, location);
         }
 
-        if(randomPercent(rd) < 1 && !mLightningOn)
+        if(randomPercent(rd) < 10 && !mLightningOn)
         {
-            if(randomPercent(rd) < 50)
+            if(randomPercent(rd) < 500)
             {
                 mLightningOn = 5;
                 mLightningTargetOpacity = 0.5f;
