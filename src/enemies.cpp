@@ -3,6 +3,7 @@
 #include <iostream>
 #include "player.hpp"
 #include "accelerator.hpp"
+#include <random>
     
 void Enemy::hit(Bullet& bullet)
 {

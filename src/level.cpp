@@ -357,15 +357,15 @@ void Level::update(Player* player, std::function<void(const std::string&)> sound
 
     float currentOpacity = mRain.getOpacity();
     if(currentOpacity < mRainTargetOpacity - 0.02f)
-        mRain.setOpacity(currentOpacity + 0.01f);
+        mRain.setOpacity(std::min(currentOpacity + 0.01f, 1.0f));
     else if(currentOpacity > mRainTargetOpacity + 0.02f)
-        mRain.setOpacity(currentOpacity - 0.01f);
+        mRain.setOpacity(std::max(0.0f, currentOpacity - 0.01f));
 
     currentOpacity = mLightning.getOpacity();
     if(currentOpacity < mLightningTargetOpacity - 0.01f)
-        mLightning.setOpacity(currentOpacity + 0.15f);
+        mLightning.setOpacity(std::min(currentOpacity + 0.15f, 1.0f));
     else if(currentOpacity > mLightningTargetOpacity + 0.01f)
-        mLightning.setOpacity(currentOpacity - 0.15f);
+        mLightning.setOpacity(std::max(0.0f, currentOpacity - 0.15f));
 }
 
 void Level::spawn(EnemyType type, const glm::vec2& position)

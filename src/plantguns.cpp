@@ -41,6 +41,7 @@ void PlantGuns::loop()
     render();
 
     mWindow.swapBuffers();
+    mAudioPlayer.update();
 }
 
 void PlantGuns::playAudio(const std::string& name)
@@ -223,11 +224,18 @@ void PlantGuns::update()
     if(mStormGain < mStormGainTarget - 0.001)
     {
         mStormGain += 0.005;
-        mAudioPlayer.setGain(mStormHandle, mStormGain);
     }
     else if(mStormGain > mStormGainTarget + 0.001)
     {
         mStormGain -= 0.005;
-        mAudioPlayer.setGain(mStormHandle, mStormGain);
     }
+
+    if(mStormGain < 0.0f)
+        mStormGain = 0.0f;
+
+    if(mAudioPlayer.getStatus(mStormHandle) == fea::EXPIRED)
+    {
+        mStormHandle = mAudioPlayer.play(mStormStream);
+    }
+    mAudioPlayer.setGain(mStormHandle, mStormGain);
 }
