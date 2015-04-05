@@ -141,7 +141,7 @@ void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& tex
     mRain.setTexture(textures.at("rain"));
 }
 
-void Level::plant(Player& player)
+void Level::plant(Player& player, std::function<void(const std::string&)> soundPlayer)
 {
     glm::uvec2 plantTile = (glm::uvec2)((player.position() + glm::vec2({16.0f, 16.0f})) / 32.0f);
 
@@ -156,6 +156,7 @@ void Level::plant(Player& player)
             if(seedBag)
             {
                 createPlant(plantTile, seedBag->type);
+                soundPlayer("shovel");
                 player.usedSeed();
             }
         }
@@ -163,14 +164,17 @@ void Level::plant(Player& player)
         {
             if(plantRipe(plantTile))
             {
-                player.giveWeapon(weaponFactory(plantId(plantTile), *mTextures));
+                auto weapon = weaponFactory(plantId(plantTile), *mTextures, soundPlayer);
+                std::string name = weapon->name();
+                player.giveWeapon(std::move(weapon));
                 destroyPlant(plantTile);
+                mTextEntries.push_back({name, player.position(), 60});
             }
         }
     }
 }
 
-void Level::update(Player* player)
+void Level::update(Player* player, std::function<void(const std::string&)> soundPlayer)
 {
     Intersector intersector;
 
@@ -198,6 +202,7 @@ void Level::update(Player* player)
             auto& pickup = mPickups[i];
             if(intersector.intersects(*player, pickup))
             {
+                soundPlayer("pickup");
                 if(pickup.id() == HEALTH)
                     player->heal(healAmount);
                 else
@@ -226,6 +231,7 @@ void Level::update(Player* player)
                 enemy->hit(*bullet);
                 enemy->knockFrom(bullet->center(), 6.5f);
                 enemy->colorize(orangeHurtColor);
+                soundPlayer("metallic");
                 dead = true;
             }
         }
@@ -245,6 +251,7 @@ void Level::update(Player* player)
         {
             if(intersector.intersects(*player, *enemy))
             {
+                soundPlayer("grunt");
                 player->hit(*enemy);
             }
         }
@@ -269,6 +276,7 @@ void Level::update(Player* player)
 
         if(enemy->isDead())
         {
+            soundPlayer("squash");
             auto drop = enemy->drop();
             if(drop)
                 createPickupFromEnemy(*enemy, *drop);
@@ -331,10 +339,12 @@ void Level::update(Player* player)
         {//it is now sunny
             mRainTargetOpacity = 0.0f;
             mLightningOn = false;
+            soundPlayer("stop");
         }
         else
         {//it is now a storm
             mRainTargetOpacity = 1.0f;
+            soundPlayer("storm");
         }
 
         mStorms = !mStorms;
@@ -486,4 +496,21 @@ void Level::updatePlayerInfo(Player& player)
     mInfoText.write(weaponName + ": " + weaponAmmo);
     mInfoText.setPenPosition({100.0f, 536.0f});
     mInfoText.write(seedName + ": " + seedAmount);
+
+    for(uint32_t i = 0; i < mTextEntries.size();)
+    {
+        auto& text = mTextEntries[i];
+
+        mInfoText.setPenPosition(text.position + glm::vec2(-20.0f, -20.0f));
+        mInfoText.write(text.text);
+
+        if(--text.ttl == 0)
+        {
+            mTextEntries.erase(mTextEntries.begin() + i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
 }

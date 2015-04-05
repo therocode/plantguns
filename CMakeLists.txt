@@ -65,7 +65,12 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG}")
 
-find_package(Featherkit COMPONENTS sdl2 ui rendering structure REQUIRED)
+find_package(OpenAL REQUIRED)
+if(OPENAL_FOUND)
+    include_directories(${OPENAL_INCLUDE_DIR})
+endif()
+
+find_package(Featherkit COMPONENTS sdl2 ui rendering structure audio REQUIRED)
 if(FEATHERKIT_FOUND)
     include_directories(${FEATHERKIT_INCLUDE_DIRS})
 endif()

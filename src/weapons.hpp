@@ -10,7 +10,7 @@ class Player;
 class Weapon
 {
     public:
-        Weapon(const std::unordered_map<std::string, fea::Texture>& textures, uint32_t fireRate);
+        Weapon(const std::unordered_map<std::string, fea::Texture>& textures, std::function<void(const std::string&)> soundPlayer, uint32_t fireRate);
         void startFire(Direction direction);
         void stopFire();
         void update();
@@ -32,12 +32,13 @@ class Weapon
         std::string mName;
         uint32_t mAmmo;
         float mSpeedMultiplier;
+        std::function<void(const std::string&)> mSoundPlayer;
 };
 
 class Pistol : public Weapon
 {
     public:
-        Pistol(const std::unordered_map<std::string, fea::Texture>& textures);
+        Pistol(const std::unordered_map<std::string, fea::Texture>& textures, std::function<void(const std::string&)> soundPlayer);
         virtual std::vector<std::unique_ptr<Bullet>> getBullets(const glm::vec2& position, Player& player);
         virtual WeaponType type();
 };
@@ -45,7 +46,7 @@ class Pistol : public Weapon
 class Shotgun : public Weapon
 {
     public:
-        Shotgun(const std::unordered_map<std::string, fea::Texture>& textures);
+        Shotgun(const std::unordered_map<std::string, fea::Texture>& textures, std::function<void(const std::string&)> soundPlayer);
         virtual std::vector<std::unique_ptr<Bullet>> getBullets(const glm::vec2& position, Player& player);
         virtual WeaponType type();
 };

@@ -8,14 +8,21 @@
 #include "pickup.hpp"
 #include "tilemap.hpp"
 
+struct TextEntry
+{
+    std::string text;
+    glm::vec2 position;
+    uint32_t ttl;
+};
+
 class Level
 {
     public:
         Level(Player& player);
         void renderMe(fea::Renderer2D& renderer, Player& player);
         void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
-        void plant(Player& player);
-        void update(Player* player);
+        void plant(Player& player, std::function<void(const std::string&)> soundPlayer);
+        void update(Player* player, std::function<void(const std::string&)> soundPlayer);
         void spawn(EnemyType type, const glm::vec2& position);
     private:
         void setTile(const glm::uvec2& tile, TileType id);
@@ -36,6 +43,7 @@ class Level
         std::vector<Pickup> mPickups;
         std::vector<std::unique_ptr<Bullet>> mBullets;
         std::vector<std::unique_ptr<Enemy>> mEnemies;
+        std::vector<TextEntry> mTextEntries;
 
         uint32_t mStormTimer;
         bool mStorms;
