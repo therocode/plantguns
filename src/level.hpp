@@ -6,6 +6,7 @@
 #include "enemies.hpp"
 #include "plant.hpp"
 #include "pickup.hpp"
+#include <array>
 
 class Level
 {

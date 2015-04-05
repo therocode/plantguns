@@ -1,5 +1,6 @@
 #include "bullets.hpp"
 #include <glm/gtx/rotate_vector.hpp>
+#include <random>
 
 void Bullet::setDirection(Direction direction)
 {
