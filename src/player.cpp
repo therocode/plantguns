@@ -12,6 +12,8 @@ Player::Player():
     mCurrentSeedIndex(0)
 {
     mHealth = 100;
+    mCollisionStart = glm::vec2(8.0f, 8.0f);
+    mCollisionSize = glm::vec2(16.0f, 16.0f);
     setSize({32.0f, 32.0f});
 }
 
@@ -71,7 +73,10 @@ void Player::update()
     if(currentWeapon())
     {
         if(currentWeapon()->isOut())
+        {
             mWeapons.erase(mWeapons.begin() + mCurrentWeaponIndex);
+            mCurrentWeaponIndex = 0;
+        }
         
         if(currentWeapon())
             currentWeapon()->update();
@@ -106,7 +111,11 @@ void Player::giveSeeds(SeedBag bag)
     for(auto& currentSeed : mSeeds)
     {
         if(currentSeed.type == bag.type)
+        {
             currentSeed.amount += bag.amount;
+            merged = true;
+            break;
+        }
     }
 
     if(!merged)
@@ -136,7 +145,10 @@ void Player::usedSeed()
     bag->amount--;
 
     if(bag->amount == 0)
+    {
         mSeeds.erase(mSeeds.begin() + mCurrentSeedIndex);
+        mCurrentSeedIndex = 0;
+    }
 }
 
 void Player::hit(Enemy& enemy)
@@ -166,6 +178,11 @@ void Player::toggleSeed()
 
     if(mCurrentSeedIndex >= mSeeds.size())
         mCurrentSeedIndex = 0;
+}
+
+void Player::heal(int32_t amount)
+{
+    mHealth = std::min(100, mHealth + amount);
 }
 
 Weapon* Player::currentWeapon()

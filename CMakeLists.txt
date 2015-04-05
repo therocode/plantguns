@@ -31,6 +31,8 @@ set(source_files
     src/accelerator.cpp
     src/seedfactory.cpp
     src/weaponfactory.cpp
+    src/tilemap.cpp
+    src/tilepathadaptor.cpp
 )
 
 set(header_files
@@ -52,6 +54,8 @@ set(header_files
     src/seedbag.hpp
     src/seedfactory.hpp
     src/weaponfactory.hpp
+    src/tilemap.hpp
+    src/tilepathadaptor.hpp
 )
 
 #C++11 required
@@ -61,7 +65,12 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG}")
 
-find_package(Featherkit COMPONENTS sdl2 ui rendering structure REQUIRED)
+find_package(OpenAL REQUIRED)
+if(OPENAL_FOUND)
+    include_directories(${OPENAL_INCLUDE_DIR})
+endif()
+
+find_package(Featherkit COMPONENTS sdl2 ui rendering structure audio REQUIRED)
 if(FEATHERKIT_FOUND)
     include_directories(${FEATHERKIT_INCLUDE_DIRS})
 endif()

@@ -24,6 +24,7 @@ class Player : public Entity
         void hit(Enemy& enemy);
         void toggleWeapon();
         void toggleSeed();
+        void heal(int32_t amount);
     private:
         Weapon* currentWeapon();
         SeedBag* currentSeedBag();

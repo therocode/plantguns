@@ -7,35 +7,44 @@
 #include "plant.hpp"
 #include "pickup.hpp"
 #include <array>
+#include "tilemap.hpp"
+
+struct TextEntry
+{
+    std::string text;
+    glm::vec2 position;
+    uint32_t ttl;
+};
 
 class Level
 {
     public:
-        Level();
+        Level(Player& player);
         void renderMe(fea::Renderer2D& renderer, Player& player);
         void setTextures(const std::unordered_map<std::string, fea::Texture>& textures);
-        void plant(Player& player);
-        void update(Player* player);
+        void plant(Player& player, std::function<void(const std::string&)> soundPlayer);
+        void update(Player* player, std::function<void(const std::string&)> soundPlayer);
         void spawn(EnemyType type, const glm::vec2& position);
     private:
-        void setTile(const glm::uvec2& tile, int32_t id);
-        int32_t getTile(const glm::uvec2& tile) const;
+        void setTile(const glm::uvec2& tile, TileType id);
+        TileType getTile(const glm::uvec2& tile) const;
         void createPlant(const glm::uvec2& tile, WeaponType id);
         bool hasPlant(const glm::uvec2& tile) const;
         bool plantRipe(const glm::uvec2& tile) const;
         WeaponType plantId(const glm::uvec2& tile) const;
         void destroyPlant(const glm::uvec2& tile);
-        void createPickupFromPlant(const glm::uvec2& tile);
+        void createPickupFromEnemy(const Enemy& enemy, WeaponType type);
         glm::vec2 spawnLocation() const;
         void updateTimer();
         void updatePlayerInfo(Player& player);
         fea::TileMap mTiles;
-        std::array<int32_t, 40 * 24> mTileIds;
+        TileMap mTileIds;
         const std::unordered_map<std::string, fea::Texture>* mTextures;
         PlantMap mPlants;
-        std::unordered_map<glm::uvec2, Pickup> mPickups;
+        std::vector<Pickup> mPickups;
         std::vector<std::unique_ptr<Bullet>> mBullets;
         std::vector<std::unique_ptr<Enemy>> mEnemies;
+        std::vector<TextEntry> mTextEntries;
 
         uint32_t mStormTimer;
         bool mStorms;

@@ -2,12 +2,14 @@
 #include <iostream>
 #include "player.hpp"
 
-Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, uint32_t fireRate):
+Weapon::Weapon(const std::unordered_map<std::string, fea::Texture>& textures, std::function<void(const std::string&)> soundPlayer, uint32_t fireRate):
     mTextures(textures),
     mDirection(NONE),
     mIsFiring(false),
     mFireRate(fireRate),
-    mSpeedMultiplier(1.0f)
+    mSpeedMultiplier(1.0f),
+    mSoundPlayer(soundPlayer),
+    mBulletReady(false)
 {
     resetTimer();
 }
@@ -70,8 +72,8 @@ void Weapon::resetTimer(bool reduced)
     mBulletTimer = (300 - mFireRate) / (reduced ? 5 : 1);
 }
 
-Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures):
-    Weapon::Weapon(textures, 260)
+Pistol::Pistol(const std::unordered_map<std::string, fea::Texture>& textures, std::function<void(const std::string&)> soundPlayer):
+    Weapon::Weapon(textures, soundPlayer, 260)
 {
     mAmmo = 14;
     mName = "Pistol";
@@ -84,6 +86,7 @@ std::vector<std::unique_ptr<Bullet>> Pistol::getBullets(const glm::vec2& positio
 
     if(mBulletReady)
     {
+        mSoundPlayer("pistol");
         auto bullet = std::unique_ptr<Bullet>(new PistolBullet(mDirection));
         bullet->setPosition(position - glm::vec2(4.0f, 4.0f));
         bullet->setTexture(mTextures.at("bullet"));
@@ -106,8 +109,8 @@ WeaponType Pistol::type()
     return PISTOL;
 }
 
-Shotgun::Shotgun(const std::unordered_map<std::string, fea::Texture>& textures):
-    Weapon::Weapon(textures, 230)
+Shotgun::Shotgun(const std::unordered_map<std::string, fea::Texture>& textures, std::function<void(const std::string&)> soundPlayer):
+    Weapon::Weapon(textures, soundPlayer, 230)
 {
     mAmmo = 8;
     mName = "Shotgun";
@@ -120,6 +123,7 @@ std::vector<std::unique_ptr<Bullet>> Shotgun::getBullets(const glm::vec2& positi
 
     if(mBulletReady)
     {
+        mSoundPlayer("shotgun");
         for(int32_t i = 0; i < 20; i++)
         {
             auto bullet = std::unique_ptr<Bullet>(new MiniBullet(mDirection));

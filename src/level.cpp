@@ -4,12 +4,11 @@
 #include "seedfactory.hpp"
 #include "weaponfactory.hpp"
 #include <random>
-        
-enum TileType {GRASS, PLOT, FENCEH, FENCEV, FENCETL, FENCETR, FENCEBR, FENCEBL};
 
-const uint32_t stormLength = 600;
+const uint32_t stormLength = 1500;
+const uint32_t healAmount = 20;
 
-Level::Level():
+Level::Level(Player& player):
     mTiles(40, 24, 32, 32, 0.33333333f, 0.33333333f),
     mStormTimer(stormLength),
     mStorms(false),
@@ -17,6 +16,8 @@ Level::Level():
     mLightning({1280.0f, 768.0f}),
     mLightningTargetOpacity(0.0f) 
 {
+    player.setCollisionMap(mTileIds);
+
     mRainAnimation = fea::Animation(glm::vec2(0.0f / 128.0f, 0.0f / 32.0f), glm::vec2(32.0f / 128.0f, 32.0f / 32.0f), 4, 7);
 
     mRain = fea::RepeatedQuad({1280.0f, 768.0f});
@@ -112,7 +113,7 @@ void Level::renderMe(fea::Renderer2D& renderer, Player& player)
         plant.second.renderMe(renderer);
 
     for(auto& pickup : mPickups)
-        pickup.second.renderMe(renderer);
+        pickup.renderMe(renderer);
 
     for(auto& bullet : mBullets)
         bullet->renderMe(renderer);
@@ -140,7 +141,7 @@ void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& tex
     mRain.setTexture(textures.at("rain"));
 }
 
-void Level::plant(Player& player)
+void Level::plant(Player& player, std::function<void(const std::string&)> soundPlayer)
 {
     glm::uvec2 plantTile = (glm::uvec2)((player.position() + glm::vec2({16.0f, 16.0f})) / 32.0f);
 
@@ -155,6 +156,7 @@ void Level::plant(Player& player)
             if(seedBag)
             {
                 createPlant(plantTile, seedBag->type);
+                soundPlayer("shovel");
                 player.usedSeed();
             }
         }
@@ -162,14 +164,17 @@ void Level::plant(Player& player)
         {
             if(plantRipe(plantTile))
             {
-                createPickupFromPlant(plantTile);
+                auto weapon = weaponFactory(plantId(plantTile), *mTextures, soundPlayer);
+                std::string name = weapon->name();
+                player.giveWeapon(std::move(weapon));
                 destroyPlant(plantTile);
+                mTextEntries.push_back({name, player.position(), 60});
             }
         }
     }
 }
 
-void Level::update(Player* player)
+void Level::update(Player* player, std::function<void(const std::string&)> soundPlayer)
 {
     Intersector intersector;
 
@@ -190,27 +195,25 @@ void Level::update(Player* player)
 
     if(player)
     {
-        glm::vec2 playerCollStart = player->position() + glm::vec2(12.0f, 12.0f);
-        glm::vec2 playerCollSize = glm::vec2(8.0f, 8.0f);
-
         std::vector<glm::uvec2> toPickup;
 
-
-        for(auto& pickup : mPickups)
+        for(uint32_t i = 0; i < mPickups.size();)
         {
-            glm::vec2 pickupCollStart = (glm::vec2) pickup.first * 32.0f;
-            glm::vec2 pickupCollSize = glm::vec2(32.0f, 32.0f);
-
-            if(intersector.intersects(playerCollStart, playerCollSize, pickupCollStart, pickupCollSize))
+            auto& pickup = mPickups[i];
+            if(intersector.intersects(*player, pickup))
             {
-                toPickup.push_back(pickup.first);
-            }
-        }
+                soundPlayer("pickup");
+                if(pickup.id() == HEALTH)
+                    player->heal(healAmount);
+                else
+                    player->giveSeeds(seedFactory(pickup.id()));
 
-        for(auto& pickedUp : toPickup)
-        {
-            player->giveWeapon(weaponFactory(mPickups.at(pickedUp).id(), *mTextures));
-            mPickups.erase(pickedUp);
+                mPickups.erase(mPickups.begin() + i);
+            }
+            else
+            {
+                ++i;
+            }
         }
     }
 
@@ -223,11 +226,12 @@ void Level::update(Player* player)
 
         for(auto& enemy : mEnemies)
         {
-            if(intersector.intersects(bullet->position(), bullet->size(), enemy->position(), enemy->size()))
+            if(intersector.intersects(*bullet, *enemy))
             {
                 enemy->hit(*bullet);
                 enemy->knockFrom(bullet->center(), 6.5f);
                 enemy->colorize(orangeHurtColor);
+                soundPlayer("metallic");
                 dead = true;
             }
         }
@@ -245,8 +249,9 @@ void Level::update(Player* player)
 
         if(player)
         {
-            if(intersector.intersects(player->position(), player->size(), enemy->position(), enemy->size()))
+            if(intersector.intersects(*player, *enemy))
             {
+                soundPlayer("grunt");
                 player->hit(*enemy);
             }
         }
@@ -254,7 +259,7 @@ void Level::update(Player* player)
         for(uint32_t j = i+1; j < mEnemies.size(); j++)
         {
             auto& other = mEnemies[j];
-            if(intersector.intersects(enemy->position(), enemy->size(), other->position(), other->size()))
+            if(intersector.intersects(*enemy, *other))
             {
                 enemy->knockFrom(other->center(), 1.5f);
                 other->knockFrom(enemy->center(), 1.5f);
@@ -263,14 +268,20 @@ void Level::update(Player* player)
 
         for(auto& plant : mPlants)
         {
-            if(intersector.intersects(enemy->position(), enemy->size(), plant.second.position(), plant.second.size()))
+            if(intersector.intersects(*enemy, plant.second))
             {
                 plant.second.trampled(*enemy);
             }
         }
 
         if(enemy->isDead())
+        {
+            soundPlayer("squash");
+            auto drop = enemy->drop();
+            if(drop)
+                createPickupFromEnemy(*enemy, *drop);
             mEnemies.erase(mEnemies.begin() + i);
+        }
         else
             i++;
     }
@@ -281,6 +292,7 @@ void Level::update(Player* player)
         {
             for(auto& bullet : player->weapon()->getBullets(player->position() + glm::vec2(16.0f, 16.0f), *player))
             {
+                bullet->setCollisionMap(mTileIds);
                 mBullets.push_back(std::move(bullet));
             }
         }
@@ -289,31 +301,31 @@ void Level::update(Player* player)
     if(mStorms)
     {
         std::random_device rd;
-        std::uniform_int_distribution<> randomPercent(0, 99);
+        std::uniform_int_distribution<> randomPercent(0, 999);
 
-        if(randomPercent(rd) < 2)
+        if(randomPercent(rd) < 10)
         {
             glm::vec2 location = spawnLocation();
             spawn(SPIKEY, location);
         }
 
-        if(randomPercent(rd) < 1 && !mLightningOn)
+        if(randomPercent(rd) < 10 && !mLightningOn)
         {
-            if(randomPercent(rd) < 50)
+            if(randomPercent(rd) < 500)
             {
                 mLightningOn = 5;
                 mLightningTargetOpacity = 0.5f;
             }
         }
+    }
 
-        if(mLightningOn > 0)
+    if(mLightningOn > 0)
+    {
+        --mLightningOn;
+
+        if(mLightningOn == 0)
         {
-            --mLightningOn;
-
-            if(mLightningOn == 0)
-            {
-                mLightningTargetOpacity = 0.0f;
-            }
+            mLightningTargetOpacity = 0.0f;
         }
     }
 
@@ -327,10 +339,12 @@ void Level::update(Player* player)
         {//it is now sunny
             mRainTargetOpacity = 0.0f;
             mLightningOn = false;
+            soundPlayer("stop");
         }
         else
         {//it is now a storm
             mRainTargetOpacity = 1.0f;
+            soundPlayer("storm");
         }
 
         mStorms = !mStorms;
@@ -361,17 +375,18 @@ void Level::spawn(EnemyType type, const glm::vec2& position)
         std::unique_ptr<Spikey> spikey = std::unique_ptr<Spikey>(new Spikey());
         spikey->setPosition(position);
         spikey->setTexture(mTextures->at("spikey"));
+        spikey->setCollisionMap(mTileIds);
         mEnemies.push_back(std::move(spikey));
     }
 }
 
-void Level::setTile(const glm::uvec2& tile, int32_t id)
+void Level::setTile(const glm::uvec2& tile, TileType id)
 {
     mTileIds[tile.x + tile.y * 40] = id;
     mTiles.setTile(tile, id);
 }
 
-int32_t Level::getTile(const glm::uvec2& tile) const
+TileType Level::getTile(const glm::uvec2& tile) const
 {
     return mTileIds[tile.x + tile.y * 40];
 }
@@ -411,26 +426,18 @@ void Level::destroyPlant(const glm::uvec2& tile)
     mPlants.erase(tile);
 }
 
-void Level::createPickupFromPlant(const glm::uvec2& tile)
+void Level::createPickupFromEnemy(const Enemy& enemy, WeaponType type)
 {
-    WeaponType id = plantId(tile);
+    Pickup pickup(type);
+    if(type == HEALTH)
+        pickup.setTexture(mTextures->at("health"));
+    else if(type == PISTOL)
+        pickup.setTexture(mTextures->at("gun"));
+    else if(type == SHOTGUN)
+        pickup.setTexture(mTextures->at("shotgun"));
 
-    glm::uvec2 spawnTile = tile;
-
-    int32_t random = rand() % 4;
-    if(random == 0)
-        spawnTile.x += 1;
-    else if(random == 1)
-        spawnTile.x -= 1;
-    else if(random == 2)
-        spawnTile.y += 1;
-    else if(random == 3)
-        spawnTile.y -= 1;
-
-    Pickup pickup(id);
-    pickup.setTexture(mTextures->at("goldplate"));
-    pickup.setPosition((glm::vec2)(spawnTile) * 32.0f);
-    mPickups.emplace(spawnTile, std::move(pickup));
+    pickup.setPosition(enemy.center() - pickup.size() / 2.0f);
+    mPickups.push_back(std::move(pickup));
 }
 
 glm::vec2 Level::spawnLocation() const
@@ -489,4 +496,21 @@ void Level::updatePlayerInfo(Player& player)
     mInfoText.write(weaponName + ": " + weaponAmmo);
     mInfoText.setPenPosition({100.0f, 536.0f});
     mInfoText.write(seedName + ": " + seedAmount);
+
+    for(uint32_t i = 0; i < mTextEntries.size();)
+    {
+        auto& text = mTextEntries[i];
+
+        mInfoText.setPenPosition(text.position + glm::vec2(-20.0f, -20.0f));
+        mInfoText.write(text.text);
+
+        if(--text.ttl == 0)
+        {
+            mTextEntries.erase(mTextEntries.begin() + i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
 }

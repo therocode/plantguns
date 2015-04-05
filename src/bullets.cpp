@@ -2,6 +2,11 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <random>
 
+Bullet::Bullet():
+    mDead(false)
+{
+}
+
 void Bullet::setDirection(Direction direction)
 {
     mDirection = direction;
@@ -12,11 +17,13 @@ void Bullet::update()
     Entity::update();
     if(mTtl > 0)
         mTtl--;
+    else
+        mDead = true;
 }
 
 bool Bullet::isDead() const
 {
-    return mTtl == 0;
+    return mDead;
 }
 
 int32_t Bullet::damage() const
@@ -24,10 +31,17 @@ int32_t Bullet::damage() const
     return mDamage;
 }
 
+bool Bullet::handleCollision()
+{
+    mDead = true;
+    return false;
+}
+
 PistolBullet::PistolBullet(Direction direction)
 {
     mTtl = 60;
     mDamage = 6;
+    mCollisionSize = glm::vec2(8.0f, 8.0f);
 
     if(direction == NONE)
         direction = RIGHT;
@@ -46,6 +60,7 @@ MiniBullet::MiniBullet(Direction direction)
     std::uniform_int_distribution<> velocity(0, 40);
     mTtl = randTtl(rd);
     mDamage = 3;
+    mCollisionSize = glm::vec2(4.0f, 4.0f);
 
     if(direction == NONE)
         direction = RIGHT;

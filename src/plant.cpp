@@ -5,7 +5,8 @@ Plant::Plant(WeaponType id):
     mRipeTimer(2400),
     mId(id)
 {
-    mHealth = 240;
+    mHealth = 600;
+    mCollisionSize = glm::vec2(32.0f, 32.0f);
 }
 
 void Plant::setDoneTexture(const fea::Texture& doneTexture)

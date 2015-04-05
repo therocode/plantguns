@@ -1,5 +1,6 @@
 #pragma once
 #include <fea/render2d.hpp>
+#include "tilemap.hpp"
 
 const fea::Color redHurtColor(0.8f, 0.2f, 0.3f);
 const fea::Color orangeHurtColor(0.8f, 0.5f, 0.3f);
@@ -22,7 +23,15 @@ class Entity
         void colorize(const fea::Color& color);
         bool isDead() const;
         int32_t health() const;
+        void setCollisionMap(const TileMap& tiles);
+        const glm::vec2& collisionStart() const;
+        const glm::vec2& collisionSize() const;
+        virtual bool handleCollision();
     protected:
+        bool collides() const;
+        bool pointCollides(const glm::vec2& point) const;
+        glm::vec2 mCollisionStart;
+        glm::vec2 mCollisionSize;
         glm::vec2 mPosition;
         fea::Quad mQuad;
         glm::vec2 mVelocity;
@@ -30,4 +39,5 @@ class Entity
         glm::vec2 mKnockVel;
         fea::Color mColoriser;
         int32_t mHealth;
+        const TileMap* mCollisionTiles;
 };

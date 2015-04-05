@@ -9,7 +9,7 @@ SeedBag seedFactory(WeaponType type)
     if(type == PISTOL)
     {
         bag.name = "Pistol seed";
-        bag.amount = 4;
+        bag.amount = 3;
     }
     else if(type == SHOTGUN)
     {
