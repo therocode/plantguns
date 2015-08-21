@@ -12,8 +12,6 @@ class PlantGuns : public fea::Application
     public:
         PlantGuns();
     protected:
-        virtual void setup(const std::vector<std::string>& args) override;
-        virtual void destroy() override; 
         virtual void loop() override;
 
         void playAudio(const std::string& name);
@@ -26,8 +24,8 @@ class PlantGuns : public fea::Application
         void setupLevel();
         void update();
         fea::InputHandler mInputHandler;
-        fea::Renderer2D mRenderer;
         fea::Window mWindow;
+        fea::Renderer2D mRenderer;
 
         Player mPlayer;
         Level mLevel;

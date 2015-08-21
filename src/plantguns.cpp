@@ -4,31 +4,19 @@
 
 PlantGuns::PlantGuns():
      mInputHandler(new fea::SDL2InputBackend()),
+     mWindow(new fea::SDL2WindowBackend(), fea::VideoMode(1280, 768), "Plant guns"),
      mRenderer(fea::Viewport({1280, 768}, {0, 0}, fea::Camera({1280.0f / 2.0f, 768.0f / 2.0f}))),
-     mWindow(new fea::SDL2WindowBackend()),
      mLevel(mPlayer),
      mStormGainTarget(0.0f),
      mStormGain(0.0f)
 {
-}
-
-void PlantGuns::setup(const std::vector<std::string>& args)
-{
-    mWindow.create(fea::VideoMode(1280, 768), "Plant guns");
     mWindow.setFramerateLimit(60);
     mInputHandler.setKeyRepeatEnabled(false);
-
-    mRenderer.setup();
 
     setupAudio();
     setupGraphics();
     setupPlayer();
     setupLevel();
-}
-
-void PlantGuns::destroy()
-{
-    mWindow.close();
 }
 
 void PlantGuns::loop()
