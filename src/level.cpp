@@ -9,7 +9,7 @@ const uint32_t stormLength = 1500;
 const uint32_t healAmount = 20;
 
 Level::Level(Player& player):
-    mTiles(40, 24, 32, 32, 0.33333333f, 0.33333333f),
+    mTiles(40, 24, 32, 32, 32, 32),
     mStormTimer(stormLength),
     mStorms(false),
     mRainTargetOpacity(0.0f),
@@ -18,7 +18,7 @@ Level::Level(Player& player):
 {
     player.setCollisionMap(mTileIds);
 
-    mRainAnimation = fea::Animation(glm::vec2(0.0f / 128.0f, 0.0f / 32.0f), glm::vec2(32.0f / 128.0f, 32.0f / 32.0f), 4, 7);
+    mRainAnimation = fea::Animation(glm::vec2(0, 0), glm::vec2(32, 32), 4, 7);
 
     mRain = fea::RepeatedQuad({1280.0f, 768.0f});
     mRain.setTileSize(glm::vec2({64.0f, 64.0f}));
