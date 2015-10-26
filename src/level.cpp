@@ -9,7 +9,7 @@ const uint32_t stormLength = 1500;
 const uint32_t healAmount = 20;
 
 Level::Level(Player& player):
-    mTiles(40, 24, 32, 32, 32, 32),
+    mTiles({32, 32}, {32, 32}),
     mStormTimer(stormLength),
     mStorms(false),
     mRainTargetOpacity(0.0f),
@@ -44,7 +44,7 @@ Level::Level(Player& player):
     mTiles.addTileDefinition(FENCEBL, fea::TileDefinition(glm::uvec2(2, 1)));
     mTiles.addTileDefinition(FENCEBR, fea::TileDefinition(glm::uvec2(0, 2)));
 
-    mTiles.fill(GRASS);
+    mTiles.fillRegion({0, 0}, {40, 24}, GRASS);
     mTileIds.fill(GRASS);
 
     //16, 9 corner
@@ -106,8 +106,7 @@ Level::Level(Player& player):
 
 void Level::renderMe(fea::Renderer2D& renderer, Player& player)
 {
-    for(const auto& chunk : mTiles.getTileChunks())
-        renderer.queue(*chunk);
+    renderer.queue(mTiles);
 
     for(auto& plant : mPlants)
         plant.second.renderMe(renderer);
