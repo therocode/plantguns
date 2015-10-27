@@ -22,7 +22,7 @@ Level::Level(Player& player):
 
     mRain = fea::RepeatedQuad({1280.0f, 768.0f});
     mRain.setTileSize(glm::vec2({64.0f, 64.0f}));
-    mRain.setScrollSpeed(glm::vec2({-0.01f, 0.06f}));
+    mRain.setScrollSpeed(glm::vec2({-0.001f, 0.001f}));
     mRain.setAnimation(mRainAnimation);
     mRain.setOpacity(0.0f);
     mLightning.setOpacity(0.0f);
