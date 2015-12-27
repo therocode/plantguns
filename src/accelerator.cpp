@@ -12,8 +12,13 @@ glm::vec2 Accelerator::get(glm::vec2 direction, float maxSpeed, const glm::vec2&
 
     if(acc.x > maxAcc)
         acc.x = maxAcc;
+    if(acc.x < -maxAcc)
+        acc.x = -maxAcc;
     if(acc.y > maxAcc)
         acc.y = maxAcc;
+    if(acc.y < -maxAcc)
+        acc.y = -maxAcc;
+
 
     return acc;
 }
