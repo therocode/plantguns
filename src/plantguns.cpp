@@ -124,8 +124,6 @@ void PlantGuns::handleInput()
 void PlantGuns::render()
 {
     mLevel.renderMe(mRenderer, mPlayer);
-
-    mRenderer.render();
 }
 
 void PlantGuns::setupAudio()

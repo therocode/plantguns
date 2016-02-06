@@ -10,7 +10,7 @@ Entity::Entity():
         
 void Entity::renderMe(fea::Renderer2D& renderer)
 {
-    renderer.queue(mQuad);
+    renderer.render(mQuad);
 }
 
 void Entity::setPosition(const glm::vec2& position)

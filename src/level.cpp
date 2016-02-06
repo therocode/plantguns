@@ -106,7 +106,7 @@ Level::Level(Player& player):
 
 void Level::renderMe(fea::Renderer2D& renderer, Player& player)
 {
-    renderer.queue(mTiles);
+    renderer.render(mTiles);
 
     for(auto& plant : mPlants)
         plant.second.renderMe(renderer);
@@ -123,13 +123,13 @@ void Level::renderMe(fea::Renderer2D& renderer, Player& player)
     if(!player.isDead())
         player.renderMe(renderer);
 
-    renderer.queue(mRain);
+    renderer.render(mRain);
     mRain.tick();
 
-    renderer.queue(mLightning);
+    renderer.render(mLightning);
 
-    renderer.queue(mTimerText);
-    renderer.queue(mInfoText);
+    renderer.render(mTimerText);
+    renderer.render(mInfoText);
 }
 
 void Level::setTextures(const std::unordered_map<std::string, fea::Texture>& textures)
